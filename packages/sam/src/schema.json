@@ -3,9 +3,9 @@
     "description": "Node application build target options for Build Facade",
     "type": "object",
     "properties": {
-        "handlerPattern": {
+        "main": {
             "type": "string",
-            "description": "The glob to use to find handlers."
+            "description": "The SAM template."
         },
         "tsConfig": {
             "type": "string",
@@ -101,7 +101,7 @@
             "description": "Path to a function which takes a webpack config, context and returns the resulting webpack config"
         }
     },
-    "required": ["tsConfig", "handlerPattern"],
+    "required": ["tsConfig", "main"],
 
     "definitions": {
         "assetPattern": {
