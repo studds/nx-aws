@@ -31,7 +31,9 @@ function getEntriesFromCloudformation(options: BuildBuilderOptions): Entry {
     // todo: Question: Is using sync file i/o OK in these builders? Did this initially
     // to get things working, then noticed that the node builder also does some sync io?
     const yaml = readFileSync(options.main, { encoding: 'utf-8' });
-    const cf: Template = load(yaml, { schema: CLOUDFORMATION_SCHEMA });
+    const cf: Template = load(yaml, {
+        schema: CLOUDFORMATION_SCHEMA
+    });
 
     const resources = cf.Resources;
 
@@ -67,8 +69,9 @@ function getEntriesFromCloudformation(options: BuildBuilderOptions): Entry {
             const codeUri = fn.Properties.CodeUri;
             const src = resolve(dir, codeUri);
             const name = camelize(parse(src).name);
-            // NB: this must match the output filename schema in the webpack config below
-            const newCodeUri = `${name}/${name}.js`;
+            // NB: this must match the output directory schema in the webpack config below
+            // so if the output webpack pattern is [name]/[name].js, then this must be `${name}/`
+            const newCodeUri = `${name}/`;
             fn.Properties.CodeUri = newCodeUri;
             return { src, name };
         });

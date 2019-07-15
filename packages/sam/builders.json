@@ -2,8 +2,8 @@
     "$schema": "@angular-devkit/architect/src/builders-schema.json",
     "builders": {
         "build": {
-            "implementation": "./src/sam",
-            "schema": "./src/schema.json",
+            "implementation": "./src/build/build",
+            "schema": "./src/build/schema.json",
             "description": "Build a SAM application"
         }
     }
