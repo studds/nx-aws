@@ -1,14 +1,14 @@
 import { Configuration, Entry } from 'webpack';
 import { BuildBuilderOptions } from '@nrwl/node/src/utils/types';
 import { camelize } from '@angular-devkit/core/src/utils/strings';
-import { load, dump } from 'js-yaml';
+import { dump } from 'js-yaml';
 import { CLOUDFORMATION_SCHEMA } from 'cloudformation-js-yaml-schema';
 import Resource from 'cloudform-types/types/resource';
-import Template from 'cloudform-types/types/template';
 import { sync as mkdirp } from 'mkdirp';
-import { writeFileSync, readFileSync } from 'fs';
+import { writeFileSync } from 'fs';
 import { resolve, parse } from 'path';
 import webpackMerge from 'webpack-merge';
+import { loadCloudFormationTemplate } from '../utils/load-cloud-formation-template';
 
 export = (
     initialConfig: Configuration,
@@ -28,12 +28,7 @@ export = (
  * Read the cloudformation template yaml, and use it to identify our input files.
  */
 function getEntriesFromCloudformation(options: BuildBuilderOptions): Entry {
-    // todo: Question: Is using sync file i/o OK in these builders? Did this initially
-    // to get things working, then noticed that the node builder also does some sync io?
-    const yaml = readFileSync(options.main, { encoding: 'utf-8' });
-    const cf: Template = load(yaml, {
-        schema: CLOUDFORMATION_SCHEMA
-    });
+    const cf = loadCloudFormationTemplate(options.main);
 
     const resources = cf.Resources;
 

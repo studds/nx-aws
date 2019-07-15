@@ -5,6 +5,16 @@
             "implementation": "./src/build/build",
             "schema": "./src/build/schema.json",
             "description": "Build a SAM application"
+        },
+        "package": {
+            "implementation": "./src/cloudformation/package/package",
+            "schema": "./src/cloudformation/package/schema.json",
+            "description": "Package a SAM application"
+        },
+        "deploy": {
+            "implementation": "./src/cloudformation/deploy/deploy",
+            "schema": "./src/cloudformation/deploy/schema.json",
+            "description": "Deploy a SAM application"
         }
     }
 }
