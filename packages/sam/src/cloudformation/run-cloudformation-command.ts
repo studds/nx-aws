@@ -36,6 +36,10 @@ export function runCloudformationCommand(
             }
         });
         const command = `aws`;
+        context.logger.log(
+            'info',
+            `Executing "${command} ${args.join(' ')}"...`
+        );
         context.reportStatus(`Executing "${command} ${args[0]} ${args[1]}"...`);
         const child = childProcess.spawn(command, args, {
             stdio: 'pipe',
