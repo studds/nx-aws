@@ -13,18 +13,24 @@ export function runCloudformationCommand(
         Object.keys(options).forEach(arg => {
             const value = options[arg];
             if (value) {
-                args.push(`--${dasherize(arg)}`);
                 if (Array.isArray(value)) {
+                    args.push(`--${dasherize(arg)}`);
                     // todo: avoid this cast to Array<string>
                     args.push(...(value as Array<string>));
                 } else if (typeof value === 'object') {
-                    Object.keys(value).forEach(key => {
-                        // todo: avoid this cast to any
-                        args.push(`${key}=${(value as any)[key]}`);
-                    });
+                    const keys = Object.keys(value);
+                    if (keys.length > 0) {
+                        args.push(`--${dasherize(arg)}`);
+                        keys.forEach(key => {
+                            // todo: avoid this cast to any
+                            args.push(`${key}=${(value as any)[key]}`);
+                        });
+                    }
                 } else if (typeof value === 'boolean') {
+                    args.push(`--${dasherize(arg)}`);
                     // do nothing - just including the flag is all that's required
                 } else {
+                    args.push(`--${dasherize(arg)}`);
                     args.push(`${value}`);
                 }
             }

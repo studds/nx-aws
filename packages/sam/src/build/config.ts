@@ -9,18 +9,22 @@ import { writeFileSync } from 'fs';
 import { resolve, parse } from 'path';
 import webpackMerge from 'webpack-merge';
 import { loadCloudFormationTemplate } from '../utils/load-cloud-formation-template';
+import { ExtendedBuildBuilderOptions } from './build';
 
 export = (
     initialConfig: Configuration,
-    {
-        options
-    }: {
-        options: BuildBuilderOptions;
+    options: {
+        options: ExtendedBuildBuilderOptions;
         configuration: string;
     }
 ) => {
     const config = webpackMerge(initialConfig, getCustomWebpack());
-    config.entry = getEntriesFromCloudformation(options);
+    config.entry = getEntriesFromCloudformation(options.options);
+    const webpackConfig = options.options.originalWebpackConfig;
+    if (webpackConfig) {
+        const configFn = require(webpackConfig);
+        return configFn(config, options);
+    }
     return config;
 };
 
@@ -94,10 +98,10 @@ function getCustomWebpack(): Configuration {
             // we create each chunk in it's own directory: this makes it easy to upload independent packages
             filename: '[name]/[name].js'
         },
-        externals: {
+        externals: [
             // use the aws-sdk provided on the lambda instead of uploading it
-            'aws-sdk': 'aws-sdk'
-        },
+            /^aws-sdk/i
+        ],
         optimization: {
             minimize: false
         }

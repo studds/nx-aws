@@ -6,13 +6,23 @@ import { Observable } from 'rxjs';
 import { nodeBuilder, BuildNodeBuilderOptions } from './node-build';
 import { resolve } from 'path';
 
-export default createBuilder<JsonObject & BuildNodeBuilderOptions>(run);
+export interface ExtendedBuildBuilderOptions extends BuildNodeBuilderOptions {
+    originalWebpackConfig?: string;
+}
+export default createBuilder<ExtendedBuildBuilderOptions & JsonObject>(run);
 
 function run(
-    options: JsonObject & BuildNodeBuilderOptions,
+    options: ExtendedBuildBuilderOptions & JsonObject,
     context: BuilderContext
 ): Observable<BuildResult> {
     const webpackConfig = resolve(__dirname, 'config.js');
+    // cache the original webpack config path for later :-)
+    if (options.webpackConfig) {
+        options.originalWebpackConfig = resolve(
+            context.workspaceRoot,
+            options.webpackConfig
+        );
+    }
     options.webpackConfig = webpackConfig;
     return nodeBuilder(options, context);
     // TODO: use scheduleBuilder instead once @nrwl/node:build supports that usecase

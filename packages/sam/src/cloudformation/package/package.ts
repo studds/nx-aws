@@ -2,6 +2,7 @@ import { createBuilder } from '@angular-devkit/architect';
 import { JsonObject } from '@angular-devkit/core';
 import { runCloudformationCommand } from '../run-cloudformation-command';
 
+// todo: allow overriding some / all of these with environment variables
 interface IPackageOptions extends JsonObject {
     /**
      * The path where your AWS CloudFormation template is located.

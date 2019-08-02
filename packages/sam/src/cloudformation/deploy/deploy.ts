@@ -9,6 +9,7 @@ type Capability =
     | 'CAPABILITY_NAMED_IAM'
     | 'CAPABILITY_AUTO_EXPAND';
 
+// todo: allow overriding some / all of these with environment variables
 interface IDeployOptions extends JsonObject {
     /**
      * The path where your AWS CloudFormation template is located.
