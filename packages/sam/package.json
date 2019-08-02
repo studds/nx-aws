@@ -43,5 +43,9 @@
     "tslint": "^5.18.0",
     "typescript": "^3.5.3"
   },
-  "repository": "https://github.com/studds/nx-aws"
+  "repository": {
+        "type" : "git",
+        "url" : "https://github.com/studds/nx-aws",
+        "directory": "packages/sam"
+    }
 }
