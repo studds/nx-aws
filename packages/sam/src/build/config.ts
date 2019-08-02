@@ -1,7 +1,7 @@
 import { Configuration } from 'webpack';
 import webpackMerge from 'webpack-merge';
 import { ExtendedBuildBuilderOptions } from './build';
-import { getEntriesFromCloudformation } from './get-entries-from-cloudformation';
+import { relative, resolve } from 'path';
 
 export = (
     initialConfig: Configuration,
@@ -11,7 +11,23 @@ export = (
     }
 ) => {
     const config = webpackMerge(initialConfig, getCustomWebpack());
-    config.entry = getEntriesFromCloudformation(options.options);
+    let src = config.entry;
+    if (Array.isArray(src)) {
+        src = src[0];
+    } else if (typeof src === 'object') {
+        src = src.main[0];
+    }
+    if (typeof src !== 'string') {
+        throw new Error(
+            `Expected config.entry to be a string, got ${typeof config.entry}`
+        );
+    }
+    const name = relative(options.options.sourceRoot || __dirname, src).replace(
+        '.ts',
+        ''
+    );
+    const srcMapInstall = resolve(__dirname, 'source-map-install.js');
+    config.entry = { [name]: [srcMapInstall, src] };
     const webpackConfig = options.options.originalWebpackConfig;
     if (webpackConfig) {
         const configFn = require(webpackConfig);

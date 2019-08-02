@@ -3,7 +3,7 @@
     "description": "Node application build target options for Build Facade",
     "type": "object",
     "properties": {
-        "main": {
+        "template": {
             "type": "string",
             "description": "The SAM template."
         },
@@ -101,7 +101,7 @@
             "description": "Path to a function which takes a webpack config, context and returns the resulting webpack config"
         }
     },
-    "required": ["tsConfig", "main"],
+    "required": ["tsConfig", "template"],
 
     "definitions": {
         "assetPattern": {
