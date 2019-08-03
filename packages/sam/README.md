@@ -53,8 +53,6 @@ appropriate builds.
 
 Given this code in your `template.yaml`:
 
-If you include a snippit like this in your SAM template (eg `template.yaml`)
-
 ```yaml
 Resources:
     MyFunction:
@@ -120,7 +118,8 @@ Add the following to your `angular.json`:
                 "options": {
                     "templateFile": "apps/api/template.yaml",
                     "outputTemplateFile": "dist/apps/api/serverless-output.yaml",
-                    "s3Prefix": "findex-payments/api"
+                    "s3Prefix": "api",
+                    "s3ArtefactsBucket": "my-artefacts-bucket"
                 },
                 "configurations": {
                     "production": {}
@@ -176,8 +175,10 @@ Add the following to `angular.json`:
                 "builder": "@nx-aws/sam:deploy",
                 "options": {
                     "templateFile": "dist/apps/api/serverless-output.yaml",
-                    "s3Prefix": "findex-payments/api",
-                    "capabilities": ["CAPABILITY_IAM", "CAPABILITY_AUTO_EXPAND"]
+                    "s3Prefix": "api",
+                    "capabilities": ["CAPABILITY_IAM", "CAPABILITY_AUTO_EXPAND"],
+                    "s3ArtefactsBucket": "my-artefacts-bucket",
+                    "stackName": "my-stack-name"
                 },
                 "configurations": {
                     "production": {}
