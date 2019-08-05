@@ -11,6 +11,8 @@ import { resolve } from 'path';
 import { writeFileSync } from 'fs';
 import { dump } from 'js-yaml';
 import Resource from 'cloudform-types/types/resource';
+import { CLOUDFORMATION_SCHEMA } from 'cloudformation-js-yaml-schema';
+
 // todo: allow overriding some / all of these with environment variables
 interface IPackageOptions extends JsonObject {
     /**
@@ -49,9 +51,13 @@ export default createBuilder<IPackageOptions>(
                     parse(options.templateFile).base
                 );
                 options.templateFile = updatedTemplateFile;
-                writeFileSync(updatedTemplateFile, dump(cloudFormation), {
-                    encoding: 'utf-8'
-                });
+                writeFileSync(
+                    updatedTemplateFile,
+                    dump(cloudFormation, { schema: CLOUDFORMATION_SCHEMA }),
+                    {
+                        encoding: 'utf-8'
+                    }
+                );
                 // todo: probably should use nrwl's command builder (whatever that's called?)
                 return runCloudformationCommand(options, context, 'package');
             })

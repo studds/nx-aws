@@ -8,10 +8,7 @@
             "type": "string",
             "title": "templateFile"
         },
-        "stackName": {
-            "type": "string",
-            "title": "stackName"
-        },
+
         "s3Bucket": {
             "description": "The name of the S3 bucket where this command uploads the artefacts that are referenced in your template.",
             "type": "string",
@@ -36,6 +33,26 @@
             "title": "capabilities"
         }
     },
-    "required": ["stackName", "s3Bucket", "templateFile"],
-    "definitions": {}
+    "required": ["s3Bucket", "templateFile"],
+    "definitions": {},
+    "oneOf": [
+        {
+            "properties": {
+                "stackName": {
+                    "type": "string",
+                    "title": "stackName"
+                }
+            },
+            "required": ["stackName"]
+        },
+        {
+            "properties": {
+                "stackNameFormat": {
+                    "type": "string",
+                    "title": "stackNameFormat"
+                }
+            },
+            "required": ["stackNameFormat"]
+        }
+    ]
 }

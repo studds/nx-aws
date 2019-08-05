@@ -18,7 +18,11 @@ interface IDeployOptions extends JsonObject {
     /**
      *
      */
-    stackName: string;
+    stackName: string | null;
+    /**
+     * todo: should update this type to show it can be this OR stackName, not both
+     */
+    stackNameFormat: string | null;
     /**
      *
      * The name of the S3 bucket where this command uploads the artefacts that are referenced in your template.
@@ -60,6 +64,10 @@ export default createBuilder<IDeployOptions>((options, context) => {
         noFailOnEmptyChangeset: true,
         parameterOverrides: getParameterOverrides(options)
     };
+    if (finalOptions.stackNameFormat) {
+        finalOptions.stackName = normalize(finalOptions.stackNameFormat)[0];
+        delete finalOptions.stackNameFormat;
+    }
     return runCloudformationCommand(finalOptions, context, 'deploy');
 });
 
@@ -80,4 +88,17 @@ function getParameterOverrides(options: IDeployOptions): IParameterOverrides {
         }
     }
     return overrides;
+}
+
+// todo: extract this into its own little module
+function normalize(...args: any[]) {
+    return args.map(function(arg) {
+        Object.keys(process.env)
+            .sort((a, b) => b.length - a.length) // sort by descending length to prevent partial replacement
+            .forEach(key => {
+                const regex = new RegExp(`\\$${key}|%${key}%`, 'ig');
+                arg = arg.replace(regex, process.env[key]);
+            });
+        return arg;
+    });
 }

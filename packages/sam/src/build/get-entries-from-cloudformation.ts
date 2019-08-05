@@ -62,9 +62,6 @@ function getEntryForFunction(
     const fileName = [...handlerParts, 'ts'].join('.');
     const filePath = join(codeUri, fileName);
     const src = resolve(dir, filePath);
-    if (!options.sourceRoot) {
-        throw new Error('Option sourceRoot is required');
-    }
     const entryName = relative(dir, src).replace('.ts', '');
     return { [entryName]: [srcMapInstall, src] };
 }
