@@ -65,7 +65,7 @@ export default createBuilder<IDeployOptions>((options, context) => {
         parameterOverrides: getParameterOverrides(options)
     };
     if (finalOptions.stackNameFormat) {
-        finalOptions.stackName = normalize(finalOptions.stackNameFormat)[0];
+        finalOptions.stackName = normalize(finalOptions.stackNameFormat)[0].toLowerCase();
         delete finalOptions.stackNameFormat;
     }
     return runCloudformationCommand(finalOptions, context, 'deploy');
