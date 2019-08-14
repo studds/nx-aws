@@ -29,10 +29,14 @@ interface IPackageOptions extends JsonObject {
      */
     s3Bucket: string;
     /**
-     *  A prefix name that the command adds to the artifacts' name when it uploads them to the S3 bucket. The
+     *  A prefix name that the command adds to the artefacts' name when it uploads them to the S3 bucket. The
      *  prefix name is a path name (folder name) for the S3 bucket.
      */
     s3Prefix: string | null;
+    /**
+     * If true, we skip the aws package command, which is unnecessary for a sub stack
+     */
+    subStackOnly: boolean;
 }
 
 try {
@@ -43,12 +47,10 @@ export default createBuilder<IPackageOptions>(
     (options: IPackageOptions, context: BuilderContext) => {
         const cloudFormation = loadCloudFormationTemplate(options.templateFile);
         return from(updateCloudFormationTemplate(cloudFormation, context)).pipe(
-            switchMap(() => {
-                const outputPath = parse(options.outputTemplateFile).dir;
-                mkdirpSync(outputPath);
-                const updatedTemplateFile = resolve(
-                    outputPath,
-                    parse(options.templateFile).base
+            switchMap(async () => {
+                const updatedTemplateFile = getFinalTemplateLocation(
+                    options.outputTemplateFile,
+                    options.templateFile
                 );
                 options.templateFile = updatedTemplateFile;
                 writeFileSync(
@@ -58,6 +60,11 @@ export default createBuilder<IPackageOptions>(
                         encoding: 'utf-8'
                     }
                 );
+                if (options.subStackOnly) {
+                    // if this is a sub-stack only, we don't need to run package, as the aws cli already
+                    // handles nested stacks.
+                    return { success: true };
+                }
                 // todo: probably should use nrwl's command builder (whatever that's called?)
                 return runCloudformationCommand(options, context, 'package');
             })
@@ -97,10 +104,15 @@ async function resolveSubStackTemplateLocation(
             target: 'package'
         });
         const outputTemplateFile = applicationOptions.outputTemplateFile;
-        if (typeof outputTemplateFile === 'string' && outputTemplateFile) {
-            const finalTemplateLocation = resolve(
-                context.workspaceRoot,
-                outputTemplateFile
+        const templateFile = applicationOptions.templateFile;
+        if (
+            isContentfulString(outputTemplateFile) &&
+            isContentfulString(templateFile)
+        ) {
+            // we map the location to the
+            const finalTemplateLocation = getFinalTemplateLocation(
+                outputTemplateFile,
+                templateFile
             );
             context.logger.info(
                 `Remapping ${key} location to ${finalTemplateLocation} for referenced project ${location}`
@@ -108,4 +120,26 @@ async function resolveSubStackTemplateLocation(
             properties.Location = finalTemplateLocation;
         }
     }
+}
+
+/**
+ *
+ * Get the destination where we'll copy the template
+ *
+ * @param outputTemplateFile
+ * @param templateFile
+ */
+function getFinalTemplateLocation(
+    outputTemplateFile: string,
+    templateFile: string
+) {
+    const dir = parse(outputTemplateFile).dir;
+    mkdirpSync(dir);
+    const base = parse(templateFile).base;
+    const finalTemplateLocation = resolve(dir, base);
+    return finalTemplateLocation;
+}
+
+function isContentfulString(s: any): s is string {
+    return typeof s === 'string' && !!s;
 }

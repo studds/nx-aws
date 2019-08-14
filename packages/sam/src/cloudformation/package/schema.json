@@ -18,9 +18,14 @@
             "title": "s3Bucket"
         },
         "s3Prefix": {
-            "description": "A prefix name that the command adds to the artifacts' name when it uploads them to the S3 bucket. The\nprefix name is a path name (folder name) for the S3 bucket.",
+            "description": "A prefix name that the command adds to the artefacts' name when it uploads them to the S3 bucket. The\nprefix name is a path name (folder name) for the S3 bucket.",
             "type": "string",
             "title": "s3Prefix"
+        },
+        "subStackOnly": {
+            "description": "If true, we skip the aws package command, which is unnecessary for a sub stack",
+            "type": "boolean",
+            "title": "subStackOnly"
         }
     },
     "required": ["outputTemplateFile", "s3Bucket", "templateFile"],
