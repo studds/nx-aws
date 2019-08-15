@@ -76,16 +76,15 @@ function run(
             (results): BuildResult => {
                 // probably overkill, but compile all the results.
                 const emittedFiles: EmittedFiles[] = [];
-                let error = '';
                 const info: {
                     [key: string]: any;
                 } = {};
-                let success = true;
+                // only successful if we've got the same number of results as we have entries.
+                let success = results.length === entries.length;
                 let target: Target | undefined;
                 results.forEach(result => {
-                    success = success && result.success;
-                    if (result.error) {
-                        error = error + result.error + '\n';
+                    if (!success) {
+                        success = false;
                     }
                     Object.assign(info, result.info);
                     target = result.target;
@@ -93,7 +92,6 @@ function run(
                 });
                 return ({
                     emittedFiles,
-                    error,
                     info,
                     success,
                     target
