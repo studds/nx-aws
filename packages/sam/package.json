@@ -1,6 +1,6 @@
 {
   "name": "@nx-aws/sam",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "AWS SAM plugin for nx",
   "keywords": [
     "AWS",

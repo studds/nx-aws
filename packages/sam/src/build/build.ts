@@ -6,7 +6,7 @@ import { Observable, from, of } from 'rxjs';
 import { nodeBuilder, BuildNodeBuilderOptions } from './node-build';
 import { resolve } from 'path';
 import { getEntriesFromCloudFormation } from './get-entries-from-cloudformation';
-import { concatMap, map, tap, toArray } from 'rxjs/operators';
+import { concatMap, map, toArray } from 'rxjs/operators';
 import { Target } from '@angular-devkit/architect/src/output-schema';
 import { Entry } from 'webpack';
 import { NodeBuildEvent } from '@nrwl/node/src/builders/build/build.impl';
@@ -75,9 +75,7 @@ export function run(
                 // dirty, but gives us more control for very little cost :-)
                 options.entry = entry;
                 // kick off the build itself;
-                return nodeBuilder(options, context).pipe(
-                    tap(console.log, console.error)
-                );
+                return nodeBuilder(options, context);
                 // TODO: use scheduleBuilder instead once @nrwl/node:build supports that usecase
                 // return from(context.scheduleBuilder('@nrwl/node:build', options)).pipe(
                 //     switchMap(p => p.output)
