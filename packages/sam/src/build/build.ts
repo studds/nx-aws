@@ -24,7 +24,7 @@ export default createBuilder<ExtendedBuildBuilderOptions & JsonObject>(run);
  * and finds things to build. Right now, it handles AWS::Serverless::Function and AWS::Serverless::LayerVersion
  *
  */
-function run(
+export function run(
     options: ExtendedBuildBuilderOptions & JsonObject,
     context: BuilderContext
 ): Observable<BuildResult> {
@@ -34,13 +34,24 @@ function run(
     // we want to build.
     // NB: there's one entry per function. This gives us more flexibility when it comes to
     // optimising the package for each function.
-    const entries = getEntriesFromCloudFormation(options, context);
+    let entries = getEntriesFromCloudFormation(options, context);
 
     if (entries.length === 0) {
         context.logger.info(
             `Didn't find anything to build in CloudFormation template`
         );
         return of({ emittedFiles: [], success: true });
+    }
+
+    if (options.watch) {
+        // in watch mode, we only want a single build for everything.
+        const combinedEntry: Entry = {};
+        entries.forEach(entry => {
+            Object.keys(entry).forEach(key => {
+                combinedEntry[key] = entry[key];
+            });
+        });
+        entries = [combinedEntry];
     }
 
     // we customise the build itself by passing a webpack config customising function to nrwl's builder

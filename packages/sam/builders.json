@@ -6,6 +6,11 @@
             "schema": "./src/build/schema.json",
             "description": "Build a SAM application"
         },
+        "execute": {
+            "implementation": "./src/execute/execute",
+            "schema": "./src/execute/schema.json",
+            "description": "Execute a SAM application"
+        },
         "package": {
             "implementation": "./src/cloudformation/package/package",
             "schema": "./src/cloudformation/package/schema.json",

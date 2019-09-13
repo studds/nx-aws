@@ -1,0 +1,43 @@
+{
+    "title": "Schema for Executing NodeJS apps",
+    "description": "NodeJS execution options",
+    "type": "object",
+    "properties": {
+        "buildTarget": {
+            "type": "string",
+            "description": "The target to run to build you the app"
+        },
+        "packageTarget": {
+            "type": "string",
+            "description": "The target to run to package you the app"
+        },
+        "waitUntilTargets": {
+            "type": "array",
+            "description": "The targets to run to before starting the node app",
+            "default": [],
+            "items": {
+                "type": "string"
+            }
+        },
+        "host": {
+            "type": "string",
+            "default": "localhost",
+            "description": "The host to inspect the process on"
+        },
+        "port": {
+            "type": "number",
+            "default": 7777,
+            "description": "The port to inspect the process on. Setting port to 0 will assign random free ports to all forked processes."
+        },
+        "args": {
+            "type": "array",
+            "description": "Extra args when starting the app",
+            "default": [],
+            "items": {
+                "type": "string"
+            }
+        }
+    },
+    "additionalProperties": false,
+    "required": ["buildTarget", "packageTarget"]
+}

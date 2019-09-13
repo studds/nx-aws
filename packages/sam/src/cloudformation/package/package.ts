@@ -1,17 +1,15 @@
 import { createBuilder, BuilderContext } from '@angular-devkit/architect';
 import { JsonObject } from '@angular-devkit/core';
 import { runCloudformationCommand } from '../run-cloudformation-command';
-import { sync as mkdirpSync } from 'mkdirp';
-import { parse } from 'path';
 import { loadCloudFormationTemplate } from '../../utils/load-cloud-formation-template';
 import Template from 'cloudform-types/types/template';
 import { from } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { resolve } from 'path';
 import { writeFileSync } from 'fs';
 import { dump } from 'js-yaml';
 import Resource from 'cloudform-types/types/resource';
 import { CLOUDFORMATION_SCHEMA } from 'cloudformation-js-yaml-schema';
+import { getFinalTemplateLocation } from '../get-final-template-location';
 
 // todo: allow overriding some / all of these with environment variables
 interface IPackageOptions extends JsonObject {
@@ -120,24 +118,6 @@ async function resolveSubStackTemplateLocation(
             properties.Location = finalTemplateLocation;
         }
     }
-}
-
-/**
- *
- * Get the destination where we'll copy the template
- *
- * @param outputTemplateFile
- * @param templateFile
- */
-function getFinalTemplateLocation(
-    outputTemplateFile: string,
-    templateFile: string
-) {
-    const dir = parse(outputTemplateFile).dir;
-    mkdirpSync(dir);
-    const base = parse(templateFile).base;
-    const finalTemplateLocation = resolve(dir, base);
-    return finalTemplateLocation;
 }
 
 function isContentfulString(s: any): s is string {
