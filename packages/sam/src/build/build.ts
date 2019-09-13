@@ -2,13 +2,14 @@ import { BuilderContext, createBuilder } from '@angular-devkit/architect';
 import { JsonObject } from '@angular-devkit/core';
 import { BuildResult, EmittedFiles } from '@angular-devkit/build-webpack';
 
-import { Observable, from, forkJoin, of } from 'rxjs';
+import { Observable, from, of } from 'rxjs';
 import { nodeBuilder, BuildNodeBuilderOptions } from './node-build';
 import { resolve } from 'path';
 import { getEntriesFromCloudFormation } from './get-entries-from-cloudformation';
-import { concatMap, map } from 'rxjs/operators';
+import { concatMap, map, tap, toArray } from 'rxjs/operators';
 import { Target } from '@angular-devkit/architect/src/output-schema';
 import { Entry } from 'webpack';
+import { NodeBuildEvent } from '@nrwl/node/src/builders/build/build.impl';
 
 export interface ExtendedBuildBuilderOptions extends BuildNodeBuilderOptions {
     originalWebpackConfig?: string;
@@ -59,12 +60,11 @@ export function run(
 
     // and now... to run the build
 
-    // "forkJoin" means "give me an array of every value that gets emitted by this observable, once it's complete"
-    return forkJoin(
-        from(entries).pipe(
-            // concatMap means "map this array to another observable, and run one at a time"
-            // we're kicking off one build per entry; using concat map means only one build runs at a time
-            concatMap(entry => {
+    return from(entries).pipe(
+        // concatMap means "map this array to another observable, and run one at a time"
+        // we're kicking off one build per entry; using concat map means only one build runs at a time
+        concatMap(
+            (entry): Observable<NodeBuildEvent> => {
                 context.logger.log(
                     'info',
                     `Running build for entry ${Object.keys(entry)[0]}`
@@ -75,14 +75,16 @@ export function run(
                 // dirty, but gives us more control for very little cost :-)
                 options.entry = entry;
                 // kick off the build itself;
-                return nodeBuilder(options, context);
+                return nodeBuilder(options, context).pipe(
+                    tap(console.log, console.error)
+                );
                 // TODO: use scheduleBuilder instead once @nrwl/node:build supports that usecase
                 // return from(context.scheduleBuilder('@nrwl/node:build', options)).pipe(
                 //     switchMap(p => p.output)
                 // );
-            })
-        )
-    ).pipe(
+            }
+        ),
+        toArray(),
         map(
             (results): BuildResult => {
                 // probably overkill, but compile all the results.
@@ -94,9 +96,6 @@ export function run(
                 let success = results.length === entries.length;
                 let target: Target | undefined;
                 results.forEach(result => {
-                    if (!success) {
-                        success = false;
-                    }
                     Object.assign(info, result.info);
                     target = result.target;
                     emittedFiles.push(...(result.emittedFiles || []));
