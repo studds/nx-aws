@@ -36,10 +36,7 @@ function getCustomWebpack(): Configuration {
             // we create each chunk in it's own directory: this makes it easy to upload independent packages
             filename: '[name].js'
         },
-        externals: [
-            // use the aws-sdk provided on the lambda instead of uploading it
-            /^aws-sdk/i
-        ],
+        externals: 'none',
         optimization: {
             minimize: false
         }
