@@ -27,7 +27,7 @@
     "cloudform-types": "^4.1.0",
     "cloudformation-js-yaml-schema": "^0.4.2",
     "js-yaml": "^3.13.1",
-    "mkdirp": "^0.5.1",
+    "mkdirp": "^1.0.3",
     "source-map-support": "^0.5.13",
     "webpack-merge": "^4.2.1"
   },
