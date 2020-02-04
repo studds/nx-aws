@@ -31,28 +31,13 @@
                 "type": "string"
             },
             "title": "capabilities"
+        },
+        "stackNameFormat": {
+            "type": "string",
+            "title": "stackNameFormat",
+            "description": "A format used to determine the stack name, with env vars substitution. By default $PROJECT-$ENVIRONMENT, where $PROJECT defaults to the project name from the schema, and $ENVIRONMENT to dev"
         }
     },
     "required": ["s3Bucket", "templateFile"],
-    "definitions": {},
-    "oneOf": [
-        {
-            "properties": {
-                "stackName": {
-                    "type": "string",
-                    "title": "stackName"
-                }
-            },
-            "required": ["stackName"]
-        },
-        {
-            "properties": {
-                "stackNameFormat": {
-                    "type": "string",
-                    "title": "stackNameFormat"
-                }
-            },
-            "required": ["stackNameFormat"]
-        }
-    ]
+    "definitions": {}
 }

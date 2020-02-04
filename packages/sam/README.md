@@ -178,7 +178,7 @@ Add the following to `angular.json`:
                     "s3Prefix": "api",
                     "capabilities": ["CAPABILITY_IAM", "CAPABILITY_AUTO_EXPAND"],
                     "s3ArtefactsBucket": "my-artefacts-bucket",
-                    "stackName": "my-stack-name"
+                    "stackNameFormat": "api-$ENVIRONMENT"
                 },
                 "configurations": {
                     "production": {}

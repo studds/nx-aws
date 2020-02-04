@@ -16,11 +16,11 @@ interface IDeployOptions extends JsonObject {
      */
     templateFile: string;
     /**
-     *
+     * Only set internally - not a valid option
      */
     stackName: string | null;
     /**
-     * todo: should update this type to show it can be this OR stackName, not both
+     *
      */
     stackNameFormat: string | null;
     /**
@@ -64,12 +64,17 @@ export default createBuilder<IDeployOptions>((options, context) => {
         noFailOnEmptyChangeset: true,
         parameterOverrides: getParameterOverrides(options)
     };
-    if (finalOptions.stackNameFormat) {
-        finalOptions.stackName = normalize(
-            finalOptions.stackNameFormat
-        )[0].toLowerCase();
-        delete finalOptions.stackNameFormat;
+    const project = context.target && context.target.project;
+    if (!process.env.PROJECT) {
+        process.env.PROJECT = project;
     }
+    if (!process.env.ENVIRONMENT) {
+        process.env.ENVIRONMENT = 'dev';
+    }
+    const stackNameFormat =
+        finalOptions.stackNameFormat || '$PROJECT-$ENVIRONMENT';
+    finalOptions.stackName = normalize(stackNameFormat)[0].toLowerCase();
+    delete finalOptions.stackNameFormat;
     return runCloudformationCommand(finalOptions, context, 'deploy');
 });
 

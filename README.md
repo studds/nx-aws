@@ -16,32 +16,6 @@ This project includes builders for that!
     (including resolving AWS::Serverless::Application references to other apps in your monorepo)
 -   @nx-aws/sam:deploy - deploys your CloudFormation template
 
-## @nx-aws/sam:execute
-
-This is for local testing, using `sam local start-api`. Add the following to your `angular.json`:
-
-```json
-{
-    "api": {
-        "root": "apps/api",
-        "sourceRoot": "apps/api/src",
-        "projectType": "application",
-        "prefix": "api",
-        "schematics": {},
-        "architect": {
-            "build": {
-                "builder": "@nx-aws/sam:execute",
-                "options": {
-                    "buildTarget": "api:build",
-                    "packageTarget": "api:package"
-                },
-            ...
-            }
-        }
-    }
-}
-```
-
 ## @nx-aws/sam:build
 
 Add the following to your `angular.json`
@@ -204,7 +178,7 @@ Add the following to `angular.json`:
                     "s3Prefix": "api",
                     "capabilities": ["CAPABILITY_IAM", "CAPABILITY_AUTO_EXPAND"],
                     "s3ArtefactsBucket": "my-artefacts-bucket",
-                    "stackName": "my-stack-name"
+                    "stackNameFormat": "api-$ENVIRONMENT"
                 },
                 "configurations": {
                     "production": {}
