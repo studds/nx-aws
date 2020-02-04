@@ -36,6 +36,10 @@ interface IPackageOptions extends JsonObject {
      * If true, we skip the aws package command, which is unnecessary for a sub stack
      */
     subStackOnly: boolean;
+    /**
+     * The region to upload resources
+     */
+    region: string | null;
 }
 
 try {

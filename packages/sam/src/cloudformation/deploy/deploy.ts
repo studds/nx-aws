@@ -43,6 +43,10 @@ interface IDeployOptions extends JsonObject {
      * If you don't specify this parameter, this action returns an InsufficientCapabilities error.
      */
     capabilities: Capability[] | null;
+    /**
+     * the region to deploy this stack
+     */
+    region: string | null;
 }
 
 export interface IParameterOverrides {

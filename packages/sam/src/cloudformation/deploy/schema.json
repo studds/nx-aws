@@ -36,6 +36,11 @@
             "type": "string",
             "title": "stackNameFormat",
             "description": "A format used to determine the stack name, with env vars substitution. By default $PROJECT-$ENVIRONMENT, where $PROJECT defaults to the project name from the schema, and $ENVIRONMENT to dev"
+        },
+        "region": {
+            "description": "The region to deploy this stack",
+            "type": "string",
+            "title": "region"
         }
     },
     "required": ["s3Bucket", "templateFile"],

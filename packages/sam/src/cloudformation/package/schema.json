@@ -26,6 +26,11 @@
             "description": "If true, we skip the aws package command, which is unnecessary for a sub stack",
             "type": "boolean",
             "title": "subStackOnly"
+        },
+        "region": {
+            "description": "The region to upload resources",
+            "type": "string",
+            "title": "region"
         }
     },
     "required": ["outputTemplateFile", "s3Bucket", "templateFile"],
