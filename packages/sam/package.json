@@ -21,7 +21,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@angular-devkit/architect": "^0.803.23",
+    "@angular-devkit/architect": "^0.900.0",
     "@angular-devkit/build-webpack": "^0.803.23",
     "@angular-devkit/core": "^8.0.1",
     "cloudform-types": "^4.1.0",
