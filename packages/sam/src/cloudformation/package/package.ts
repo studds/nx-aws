@@ -43,6 +43,7 @@ interface IPackageOptions extends JsonObject {
 }
 
 try {
+    require('dotenv').config();
 } catch (e) {}
 
 export default createBuilder<IPackageOptions>(

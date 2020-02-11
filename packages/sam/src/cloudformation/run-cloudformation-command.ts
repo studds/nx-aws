@@ -2,16 +2,17 @@ import { JsonObject } from '@angular-devkit/core';
 import { BuilderOutput, BuilderContext } from '@angular-devkit/architect';
 import * as childProcess from 'child_process';
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
+import { CloudFormationDeployOptions } from './deploy/CloudFormationDeployOptions';
 
 export function runCloudformationCommand(
-    options: JsonObject,
+    options: JsonObject | CloudFormationDeployOptions,
     context: BuilderContext,
     subcommand: string
 ) {
     return new Promise<BuilderOutput>((resolve, reject) => {
         const args: string[] = ['cloudformation', subcommand];
         Object.keys(options).forEach(arg => {
-            const value = options[arg];
+            const value = (options as any)[arg];
             if (value) {
                 if (Array.isArray(value)) {
                     args.push(`--${dasherize(arg)}`);

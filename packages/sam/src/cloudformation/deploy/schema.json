@@ -32,15 +32,15 @@
             },
             "title": "capabilities"
         },
-        "stackNameFormat": {
-            "type": "string",
-            "title": "stackNameFormat",
-            "description": "A format used to determine the stack name, with env vars substitution. By default $PROJECT-$ENVIRONMENT, where $PROJECT defaults to the project name from the schema, and $ENVIRONMENT to dev"
-        },
         "region": {
             "description": "The region to deploy this stack",
             "type": "string",
             "title": "region"
+        },
+        "importStackOutputs": {
+            "description": "Map of values to import from stacks defined by other projects. Values are in the format {project-name}:{target-name}.{output-name}. Note this is not on the basis of exported values.",
+            "type": "object",
+            "additionalProperties": { "type": "string" }
         }
     },
     "required": ["s3Bucket", "templateFile"],

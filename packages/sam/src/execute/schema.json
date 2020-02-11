@@ -36,6 +36,10 @@
             "items": {
                 "type": "string"
             }
+        },
+        "mimicEnv": {
+            "type": "string",
+            "description": "The name of an environment to grab environment variables from"
         }
     },
     "additionalProperties": false,

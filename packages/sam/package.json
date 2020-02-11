@@ -12,42 +12,5 @@
     "Monorepo"
   ],
   "main": "dist/sam.js",
-  "builders": "builders.json",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "prepublishOnly": "npm run build"
-  },
-  "author": "",
-  "license": "MIT",
-  "dependencies": {
-    "@angular-devkit/architect": "^0.803.23",
-    "@angular-devkit/build-webpack": "^0.803.23",
-    "@angular-devkit/core": "^8.0.1",
-    "cloudform-types": "^4.1.0",
-    "cloudformation-js-yaml-schema": "^0.4.2",
-    "js-yaml": "^3.13.1",
-    "mkdirp": "^1.0.3",
-    "source-map-support": "^0.5.13",
-    "webpack-merge": "^4.2.1"
-  },
-  "peerDependencies": {
-    "@nrwl/node": ">= 8.2.0",
-    "@nrwl/workspace": ">= 8.2.0"
-  },
-  "devDependencies": {
-    "@nrwl/node": "^8.2.0",
-    "@nrwl/workspace": "^8.2.0",
-    "@types/js-yaml": "^3.12.2",
-    "@types/mkdirp": "^0.5.2",
-    "@types/webpack-dev-server": "^3.1.7",
-    "@types/webpack-merge": "^4.1.5",
-    "tslint": "^5.18.0",
-    "typescript": "^3.7.5"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/studds/nx-aws",
-    "directory": "packages/sam"
-  }
+  "builders": "builders.json"
 }

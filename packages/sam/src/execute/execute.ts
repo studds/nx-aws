@@ -7,8 +7,8 @@ import {
     Target
 } from '@angular-devkit/architect';
 
-import { Observable, of, zip, from, combineLatest } from 'rxjs';
-import { concatMap, first, map, filter, tap, switchMap } from 'rxjs/operators';
+import { Observable, of, combineLatest, from } from 'rxjs';
+import { concatMap, map, tap, switchMap } from 'rxjs/operators';
 
 import { stripIndents } from '@angular-devkit/core/src/utils/literals';
 import { SamExecuteBuilderOptions } from './options';
@@ -16,6 +16,9 @@ import { runSam } from './run-sam';
 import { JsonObject } from '@angular-devkit/core';
 import { getFinalTemplateLocation } from '../cloudformation/get-final-template-location';
 import { copyFileSync, watch } from 'fs';
+import { getValidatedOptions } from '../utils/getValidatedOptions';
+import { formatStackName } from '../cloudformation/deploy/formatStackName';
+import { loadEnvironmentVariablesForStackLambdas } from './loadEnvironmentVariablesForStackLambdas';
 
 try {
     require('dotenv').config();
@@ -34,7 +37,9 @@ export function nodeExecuteBuilderHandler(
     options: SamExecuteBuilderOptions,
     context: BuilderContext
 ): Observable<BuilderOutput> {
-    return runWaitUntilTargets(options, context).pipe(
+    const project = context.target?.project;
+    return loadEnvFromStack(options, project).pipe(
+        switchMap(() => runWaitUntilTargets(options)),
         concatMap(
             (v): Observable<BuilderOutput> => {
                 if (!v.success) {
@@ -47,6 +52,18 @@ export function nodeExecuteBuilderHandler(
             }
         )
     );
+}
+
+function loadEnvFromStack(
+    options: SamExecuteBuilderOptions,
+    project: string | undefined
+): Observable<Record<string, string>> {
+    if (options.mimicEnv && project) {
+        const stackName = formatStackName(project, undefined, options.mimicEnv);
+        console.log(`Getting environment variables for ${stackName}`);
+        return from(loadEnvironmentVariablesForStackLambdas(stackName));
+    }
+    return of({});
 }
 
 function startBuild(
@@ -126,30 +143,6 @@ function getBuilderOptions(
     );
 }
 
-function getValidatedOptions(
-    targetName: string,
-    context: BuilderContext,
-    validate = true
-): Observable<JsonObject> {
-    const target = targetFromTargetString(targetName);
-    return from(
-        // First we get the build options and make sure they are valid
-        Promise.all([
-            context.getTargetOptions(target),
-            context.getBuilderNameForTarget(target)
-        ]).then(async ([targetOptions, builderName]) => {
-            if (!validate) {
-                return targetOptions;
-            }
-            const validatedBuilderOptions = await context.validateOptions(
-                targetOptions,
-                builderName
-            );
-            return validatedBuilderOptions;
-        })
-    );
-}
-
 function getPackageOptions(
     options: SamExecuteBuilderOptions,
     context: BuilderContext
@@ -201,42 +194,26 @@ function getDestinationTemplatePath(
     templateFile: string
 ): Observable<string> {
     return getPackageOptions(options, context).pipe(
-        map(
-            (packageOptions: JsonObject): string => {
-                if (typeof packageOptions.outputTemplateFile !== 'string') {
-                    throw new Error(
-                        'Package options were missing outputTemplateFile'
-                    );
-                }
-                return getFinalTemplateLocation(
-                    packageOptions.outputTemplateFile,
-                    templateFile
+        map((packageOptions: JsonObject): string => {
+            if (typeof packageOptions.outputTemplateFile !== 'string') {
+                throw new Error(
+                    'Package options were missing outputTemplateFile'
                 );
             }
-        )
+            return getFinalTemplateLocation(
+                packageOptions.outputTemplateFile,
+                templateFile
+            );
+        })
     );
 }
 
 function runWaitUntilTargets(
-    options: SamExecuteBuilderOptions,
-    context: BuilderContext
+    options: SamExecuteBuilderOptions
 ): Observable<BuilderOutput> {
-    if (!options.waitUntilTargets || options.waitUntilTargets.length === 0)
+    if (!options.waitUntilTargets || options.waitUntilTargets.length === 0) {
         return of({ success: true });
+    }
 
-    return zip(
-        ...options.waitUntilTargets.map(b => {
-            return scheduleTargetAndForget(
-                context,
-                targetFromTargetString(b)
-            ).pipe(
-                filter(e => e.success !== undefined),
-                first()
-            );
-        })
-    ).pipe(
-        map(results => {
-            return { success: !results.some(r => !r.success) };
-        })
-    );
+    throw new Error('Unimplemented - need to get the updated way to do this.');
 }

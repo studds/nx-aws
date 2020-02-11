@@ -3,8 +3,11 @@ import { JsonObject } from '@angular-devkit/core';
 import { underscore } from '@angular-devkit/core/src/utils/strings';
 import { runCloudformationCommand } from '../run-cloudformation-command';
 import { loadCloudFormationTemplate } from '../../utils/load-cloud-formation-template';
+import { formatStackName } from './formatStackName';
+import { OutputValueRetriever } from './OutputValueRetriever';
+import { CloudFormationDeployOptions } from './CloudFormationDeployOptions';
 
-type Capability =
+export type Capability =
     | 'CAPABILITY_IAM'
     | 'CAPABILITY_NAMED_IAM'
     | 'CAPABILITY_AUTO_EXPAND';
@@ -47,39 +50,57 @@ interface IDeployOptions extends JsonObject {
      * the region to deploy this stack
      */
     region: string | null;
+    importStackOutputs: { [key: string]: string } | null;
 }
 
 export interface IParameterOverrides {
     [key: string]: string;
 }
 
-export interface IFinalDeployOptions extends IDeployOptions {
-    parameterOverrides: IParameterOverrides;
-    noFailOnEmptyChangeset: boolean;
-}
-
 try {
     require('dotenv').config();
 } catch (e) {}
 
-export default createBuilder<IDeployOptions>((options, context) => {
-    const finalOptions: IFinalDeployOptions = {
-        ...options,
-        noFailOnEmptyChangeset: true,
-        parameterOverrides: getParameterOverrides(options)
-    };
+export default createBuilder<IDeployOptions>(async (options, context) => {
+    const {
+        capabilities,
+        importStackOutputs,
+        region,
+        s3Bucket,
+        s3Prefix,
+        templateFile
+    } = options;
+
     const project = context.target && context.target.project;
-    if (!process.env.PROJECT) {
-        process.env.PROJECT = project;
+    if (!project) {
+        throw new Error(`Could not find project name for target`);
     }
-    if (!process.env.ENVIRONMENT) {
-        process.env.ENVIRONMENT = 'dev';
+    const stackName = formatStackName(project).toLowerCase();
+    if (importStackOutputs) {
+        const outputValueRetriever = new OutputValueRetriever();
+        // retrieve the values from the other projects
+        const values = await outputValueRetriever.getOutputValues(
+            importStackOutputs,
+            context
+        );
+        // and export them as environment variables, ready to be picked up if they match
+        // any input parameters
+        process.env = { ...values, ...process.env };
     }
-    const stackNameFormat =
-        finalOptions.stackNameFormat || '$PROJECT-$ENVIRONMENT';
-    finalOptions.stackName = normalize(stackNameFormat)[0].toLowerCase();
-    delete finalOptions.stackNameFormat;
-    return runCloudformationCommand(finalOptions, context, 'deploy');
+
+    const parameterOverrides = getParameterOverrides(options);
+
+    const cfOptions: CloudFormationDeployOptions = {
+        capabilities,
+        noFailOnEmptyChangeset: true,
+        parameterOverrides,
+        s3Bucket,
+        stackName,
+        templateFile,
+        s3Prefix,
+        region
+    };
+    return runCloudformationCommand(cfOptions, context, 'deploy');
 });
 
 function getParameterOverrides(options: IDeployOptions): IParameterOverrides {
@@ -99,17 +120,4 @@ function getParameterOverrides(options: IDeployOptions): IParameterOverrides {
         }
     }
     return overrides;
-}
-
-// todo: extract this into its own little module
-function normalize(...args: any[]) {
-    return args.map(function(arg) {
-        Object.keys(process.env)
-            .sort((a, b) => b.length - a.length) // sort by descending length to prevent partial replacement
-            .forEach(key => {
-                const regex = new RegExp(`\\$${key}|%${key}%`, 'ig');
-                arg = arg.replace(regex, process.env[key]);
-            });
-        return arg;
-    });
 }

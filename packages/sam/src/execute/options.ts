@@ -7,4 +7,5 @@ export interface SamExecuteBuilderOptions extends JsonObject {
     packageTarget: string;
     host: string;
     port: number;
+    mimicEnv: string;
 }

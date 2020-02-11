@@ -11,7 +11,6 @@ import { JsonObject, workspaces } from '@angular-devkit/core';
 import { runWebpack, BuildResult } from '@angular-devkit/build-webpack';
 
 import { Observable, from } from 'rxjs';
-import { writeFileSync } from 'fs';
 import { resolve } from 'path';
 import { map, concatMap } from 'rxjs/operators';
 import { getNodeWebpackConfig } from '@nrwl/node/src/utils/node.config';
@@ -57,25 +56,15 @@ export function nodeBuilder(
         concatMap(config =>
             runWebpack(config, context, {
                 logging: stats => {
-                    if (options.statsJson) {
-                        writeFileSync(
-                            resolve(
-                                context.workspaceRoot,
-                                options.outputPath! as string,
-                                'stats.json'
-                            ),
-                            JSON.stringify(stats.toJson(), null, 2)
-                        );
-                    }
-
-                    context.logger.info(stats.toString());
-                }
+                    context.logger.info(stats.toString(config.stats));
+                },
+                webpackFactory: require('webpack')
             })
         ),
         map((buildEvent: BuildResult) => {
             buildEvent.outfile = resolve(
                 context.workspaceRoot,
-                options.outputPath as string,
+                options.outputPath,
                 OUT_FILENAME
             );
             return buildEvent as NodeBuildEvent;
