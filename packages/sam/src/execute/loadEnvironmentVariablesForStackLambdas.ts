@@ -19,7 +19,7 @@ export async function loadEnvironmentVariablesForStackLambdas(
     const envVars: Record<string, string> = {};
 
     for (const resource of stackResources) {
-        if (resource.ResourceType === 'AWS::Serverless::Function') {
+        if (resource.ResourceType === 'AWS::Lambda::Function') {
             const id = resource.PhysicalResourceId;
             if (id) {
                 const fndesc = await lambda

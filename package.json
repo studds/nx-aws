@@ -19,7 +19,7 @@
     "build:ts": "tsc --build packages/sam/tsconfig.json",
     "build:mpt": "monorepo-package-tool",
     "build:cp": "cp packages/sam/builders.json dist/packages/sam",
-    "build:rsync": "cd packages/sam/src; rsync -R **/*.json ../../../dist/packages/sam; cd ../../..",
+    "build:rsync": "cd packages/sam/src; rsync -zarv -m --include=\"*/\" --include \"*.json\" --exclude \"*\" . ../../../dist/packages/sam; cd ../../..",
     "build": "run-s build:*",
     "prepublishOnly": "run-s clean build"
   },
