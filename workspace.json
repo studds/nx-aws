@@ -42,6 +42,20 @@
                             }
                         ]
                     }
+                },
+                "publish": {
+                    "builder": "@nrwl/workspace:run-commands",
+                    "options": {
+                        "parallel": false,
+                        "commands": [
+                            {
+                                "command": "npx monorepo-package-tool --rootModuleDir libs/sam --destDir dist/libs/sam"
+                            },
+                            {
+                                "command": "npm publish dist/libs/sam --dry-run"
+                            }
+                        ]
+                    }
                 }
             }
         }
