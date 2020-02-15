@@ -1,98 +1,105 @@
 {
-  "version": 1,
-  "projects": {
-    "sam": {
-      "root": "libs/sam",
-      "sourceRoot": "libs/sam/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "config": "libs/sam/.eslintrc",
-            "tsConfig": [
-              "libs/sam/tsconfig.lib.json",
-              "libs/sam/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/sam/**"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/sam/jest.config.js",
-            "tsConfig": "libs/sam/tsconfig.spec.json"
-          }
-        },
-        "build": {
-          "builder": "@nrwl/node:package",
-          "options": {
-            "outputPath": "dist/libs/sam",
-            "tsConfig": "libs/sam/tsconfig.lib.json",
-            "packageJson": "libs/sam/package.json",
-            "main": "libs/sam/src/index.ts",
-            "assets": ["libs/sam/*.md"]
-          }
+    "version": 1,
+    "projects": {
+        "sam": {
+            "root": "libs/sam",
+            "sourceRoot": "libs/sam/src",
+            "projectType": "library",
+            "schematics": {},
+            "architect": {
+                "lint": {
+                    "builder": "@nrwl/linter:lint",
+                    "options": {
+                        "linter": "eslint",
+                        "config": "libs/sam/.eslintrc",
+                        "tsConfig": [
+                            "libs/sam/tsconfig.lib.json",
+                            "libs/sam/tsconfig.spec.json"
+                        ],
+                        "exclude": ["**/node_modules/**", "!libs/sam/**"]
+                    }
+                },
+                "test": {
+                    "builder": "@nrwl/jest:jest",
+                    "options": {
+                        "jestConfig": "libs/sam/jest.config.js",
+                        "tsConfig": "libs/sam/tsconfig.spec.json"
+                    }
+                },
+                "build": {
+                    "builder": "@nrwl/node:package",
+                    "options": {
+                        "outputPath": "dist/libs/sam",
+                        "tsConfig": "libs/sam/tsconfig.lib.json",
+                        "packageJson": "libs/sam/package.json",
+                        "main": "libs/sam/src/index.ts",
+                        "assets": [
+                            "libs/sam/*.md",
+                            {
+                                "glob": "**/*.json",
+                                "input": "libs/sam/src",
+                                "output": ""
+                            }
+                        ]
+                    }
+                }
+            }
         }
-      }
+    },
+    "cli": {
+        "defaultCollection": "@nrwl/workspace"
+    },
+    "schematics": {
+        "@nrwl/workspace": {
+            "library": {
+                "linter": "eslint"
+            }
+        },
+        "@nrwl/cypress": {
+            "cypress-project": {
+                "linter": "eslint"
+            }
+        },
+        "@nrwl/react": {
+            "application": {
+                "linter": "eslint"
+            },
+            "library": {
+                "linter": "eslint"
+            }
+        },
+        "@nrwl/next": {
+            "application": {
+                "linter": "eslint"
+            }
+        },
+        "@nrwl/web": {
+            "application": {
+                "linter": "eslint"
+            }
+        },
+        "@nrwl/node": {
+            "application": {
+                "linter": "eslint"
+            },
+            "library": {
+                "linter": "eslint"
+            }
+        },
+        "@nrwl/nx-plugin": {
+            "plugin": {
+                "linter": "eslint"
+            }
+        },
+        "@nrwl/nest": {
+            "application": {
+                "linter": "eslint"
+            }
+        },
+        "@nrwl/express": {
+            "application": {
+                "linter": "eslint"
+            }
+        }
     }
-  },
-  "cli": {
-    "defaultCollection": "@nrwl/workspace"
-  },
-  "schematics": {
-    "@nrwl/workspace": {
-      "library": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/cypress": {
-      "cypress-project": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/react": {
-      "application": {
-        "linter": "eslint"
-      },
-      "library": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/next": {
-      "application": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/web": {
-      "application": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/node": {
-      "application": {
-        "linter": "eslint"
-      },
-      "library": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/nx-plugin": {
-      "plugin": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/nest": {
-      "application": {
-        "linter": "eslint"
-      }
-    },
-    "@nrwl/express": {
-      "application": {
-        "linter": "eslint"
-      }
-    }
-  }
 }

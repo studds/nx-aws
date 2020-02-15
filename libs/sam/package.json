@@ -1,4 +1,15 @@
 {
   "name": "@nx-aws/sam",
-  "version": "0.0.1"
+  "version": "0.3.3",
+  "description": "AWS SAM plugin for nx",
+  "keywords": [
+    "AWS",
+    "SAM",
+    "Serverless",
+    "Angular CLI",
+    "Workspace",
+    "Nx",
+    "Monorepo"
+  ],
+  "builders": "builders.json"
 }

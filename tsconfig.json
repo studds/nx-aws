@@ -20,6 +20,7 @@
         "noUnusedParameters": true,
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
+        "esModuleInterop": true,
         "paths": {
             "@nx-aws/sam": ["libs/sam/src/index.ts"]
         }
