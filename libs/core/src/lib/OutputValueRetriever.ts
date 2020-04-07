@@ -1,8 +1,8 @@
 import { CloudFormation } from 'aws-sdk';
 import { formatStackName } from './formatStackName';
-import { constantCase } from 'constant-case';
-import { getValidatedOptions } from '../../utils/getValidatedOptions';
+import { getValidatedOptions } from './getValidatedOptions';
 import { BuilderContext } from '@angular-devkit/architect';
+import { ImportStackOutputs } from './ImportStackOutputs';
 
 export class OutputValueRetriever {
     private cfCache: Record<string, CloudFormation> = {};
@@ -10,39 +10,42 @@ export class OutputValueRetriever {
     private outputCache: Record<string, CloudFormation.Outputs> = {};
 
     async getOutputValues(
-        importStackOutputs: { [key: string]: string },
-        context: BuilderContext
+        importStackOutputs: ImportStackOutputs,
+        context: BuilderContext,
+        stackSuffix: string | undefined
     ) {
         const values: Record<string, string> = {};
         const keys = Object.keys(importStackOutputs);
         for (const key of keys) {
             const element = importStackOutputs[key];
-            const [sourceTargetName, outputName] = element.split('.');
-            if (!sourceTargetName || !outputName) {
-                throw new Error(
-                    `Must provide details of stack output to import in format "{projectName}:{target}.{outputName}" - got ${element}`
-                );
-            }
+            const { targetName, outputName } = element;
             const value = await this.getOutputValue(
-                sourceTargetName,
+                targetName,
                 outputName,
-                context
+                context,
+                stackSuffix
             );
-            values[constantCase(key)] = value;
+            values[key] = value;
         }
         return values;
     }
 
     private async getOutputValue(
-        sourceTargetName: string,
+        targetName: string,
         outputName: string,
-        context: BuilderContext
+        context: BuilderContext,
+        stackSuffix: string | undefined
     ) {
-        const [sourceProjectName] = sourceTargetName.split(':');
-        const otherStackName = formatStackName(sourceProjectName);
+        const [sourceProjectName] = targetName.split(':');
+
+        const otherStackName = formatStackName(
+            sourceProjectName,
+            undefined,
+            stackSuffix
+        );
         const outputs = await this.getStackOutputs(
             otherStackName,
-            sourceTargetName,
+            targetName,
             context
         );
         const output = outputs.find(
@@ -66,24 +69,21 @@ export class OutputValueRetriever {
 
     private async getStackOutputs(
         otherStackName: string,
-        sourceTargetName: string,
+        targetName: string,
         context: BuilderContext
     ) {
         if (this.outputCache[otherStackName]) {
             return this.outputCache[otherStackName];
         }
         context.logger.info(`Retrieving outputs for ${otherStackName}...`);
-        const cloudFormation = await this.getCfForProject(
-            sourceTargetName,
-            context
-        );
+        const cloudFormation = await this.getCfForProject(targetName, context);
         const describeStacksResult = await cloudFormation
             .describeStacks({ StackName: otherStackName })
             .promise();
         const stacks = describeStacksResult.Stacks;
         if (!stacks) {
             throw new Error(
-                `Could not find the source stack ${otherStackName} for project ${sourceTargetName}`
+                `Could not find the source stack ${otherStackName} for project ${targetName}`
             );
         }
         const outputs = stacks[0].Outputs;

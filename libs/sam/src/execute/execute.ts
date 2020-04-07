@@ -16,8 +16,7 @@ import { runSam } from './run-sam';
 import { JsonObject } from '@angular-devkit/core';
 import { getFinalTemplateLocation } from '../cloudformation/get-final-template-location';
 import { copyFileSync, watch } from 'fs';
-import { getValidatedOptions } from '../utils/getValidatedOptions';
-import { formatStackName } from '../cloudformation/deploy/formatStackName';
+import { getValidatedOptions, formatStackName } from '@nx-aws/core';
 import { loadEnvironmentVariablesForStackLambdas } from './loadEnvironmentVariablesForStackLambdas';
 
 try {

@@ -97,6 +97,9 @@ export function run(
                     Object.assign(info, result.info);
                     target = result.target;
                     emittedFiles.push(...(result.emittedFiles || []));
+                    if (!result.success) {
+                        success = false;
+                    }
                 });
                 return ({
                     emittedFiles,

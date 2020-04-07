@@ -1,0 +1,42 @@
+{
+    "title": "Schema for Executing NodeJS apps",
+    "description": "NodeJS execution options",
+    "type": "object",
+    "properties": {
+        "resources": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "include": {
+                        "type": "array",
+                        "items": { "type": "string" }
+                    },
+                    "cacheControl": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "destPrefix": { "type": "string" },
+        "stackSuffix": { "type": "string" },
+        "bucket": {
+            "type": "object",
+            "properties": {
+                "targetName": { "type": "string" },
+                "outputName": { "type": "string" }
+            },
+            "required": ["targetName", "outputName"]
+        },
+        "distribution": {
+            "type": "object",
+            "properties": {
+                "targetName": { "type": "string" },
+                "outputName": { "type": "string" }
+            },
+            "required": ["targetName", "outputName"]
+        }
+    },
+    "additionalProperties": false,
+    "required": ["bucket"]
+}

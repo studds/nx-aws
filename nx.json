@@ -1,18 +1,24 @@
 {
-  "npmScope": "nx-aws",
-  "implicitDependencies": {
-    "workspace.json": "*",
-    "package.json": {
-      "dependencies": "*",
-      "devDependencies": "*"
+    "npmScope": "nx-aws",
+    "implicitDependencies": {
+        "workspace.json": "*",
+        "package.json": {
+            "dependencies": "*",
+            "devDependencies": "*"
+        },
+        "tsconfig.json": "*",
+        "tslint.json": "*",
+        "nx.json": "*"
     },
-    "tsconfig.json": "*",
-    "tslint.json": "*",
-    "nx.json": "*"
-  },
-  "projects": {
-    "sam": {
-      "tags": []
+    "projects": {
+        "sam": {
+            "tags": []
+        },
+        "core": {
+            "tags": []
+        },
+        "s3": {
+            "tags": []
+        }
     }
-  }
 }

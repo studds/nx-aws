@@ -1,14 +1,13 @@
 {
-  "name": "@nx-aws/sam",
-  "description": "AWS SAM plugin for nx",
+  "name": "@nx-aws/core",
+  "description": "Core of @nx-aws",
   "keywords": [
     "AWS",
-    "SAM",
     "Serverless",
     "Angular CLI",
     "Workspace",
     "Nx",
     "Monorepo"
   ],
-  "builders": "builders.json"
+  "main": "index.js"
 }

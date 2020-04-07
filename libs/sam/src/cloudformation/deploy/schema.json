@@ -40,7 +40,22 @@
         "importStackOutputs": {
             "description": "Map of values to import from stacks defined by other projects. Values are in the format {project-name}:{target-name}.{output-name}. Note this is not on the basis of exported values.",
             "type": "object",
-            "additionalProperties": { "type": "string" }
+            "additionalProperties": {
+                "type": "object",
+                "properties": {
+                    "targetName": { "type": "string" },
+                    "outputName": { "type": "string" }
+                },
+                "required": ["targetName", "outputName"]
+            }
+        },
+        "stackSuffix": { "type": "string" },
+        "parameterOverrides": {
+            "description": "Map of parameter overrides",
+            "type": "object",
+            "additionalProperties": {
+                "type": "string"
+            }
         }
     },
     "required": ["s3Bucket", "templateFile"],

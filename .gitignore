@@ -5,6 +5,7 @@
 /tmp
 /out-tsc
 serverless-output.yaml
+*.tgz
 
 # dependencies
 /node_modules
