@@ -10,7 +10,9 @@ import { dump } from 'js-yaml';
 import Resource from 'cloudform-types/types/resource';
 import { CLOUDFORMATION_SCHEMA } from 'cloudformation-js-yaml-schema';
 import { getFinalTemplateLocation } from '../get-final-template-location';
-import { resolve, parse } from 'path';
+import { parse } from 'path';
+import { embedStateMachine } from './embedStateMachine';
+import { mapRelativePathsToAbsolute } from './mapRelativePathsToAbsolute';
 
 // todo: allow overriding some / all of these with environment variables
 interface IPackageOptions extends JsonObject {
@@ -82,6 +84,15 @@ async function updateCloudFormationTemplate(
     context: BuilderContext,
     options: IPackageOptions
 ) {
+    await resolveSubStacks(cloudFormation, context);
+    const inputPath = parse(options.templateFile).dir;
+    mapRelativePathsToAbsolute(cloudFormation, inputPath);
+    embedStateMachine(cloudFormation, inputPath);
+}
+async function resolveSubStacks(
+    cloudFormation: Template,
+    context: BuilderContext
+) {
     const resources = cloudFormation.Resources;
     if (resources) {
         for (const key in resources) {
@@ -91,19 +102,18 @@ async function updateCloudFormationTemplate(
                     await resolveSubStackTemplateLocation(
                         resource,
                         context,
-                        key,
-                        parse(options.templateFile).dir
+                        key
                     );
                 }
             }
         }
     }
 }
+
 async function resolveSubStackTemplateLocation(
     resource: Resource,
     context: BuilderContext,
-    key: string,
-    inputDir: string
+    key: string
 ) {
     const properties = resource.Properties;
     if (properties) {
@@ -130,11 +140,7 @@ async function resolveSubStackTemplateLocation(
                 properties.Location = finalTemplateLocation;
             }
         } catch (err) {
-            const finalTemplateLocation = resolve(inputDir, location);
-            context.logger.info(
-                `Remapping sub-stack for ${key} to ${finalTemplateLocation} from ${location}`
-            );
-            properties.Location = finalTemplateLocation;
+            // ignore error - it's not a project reference
         }
     }
 }

@@ -52,7 +52,7 @@
                                 "command": "npx monorepo-package-tool --rootModuleDir libs/sam --destDir dist/libs/sam"
                             },
                             {
-                                "command": "npm publish dist/libs/sam --dry-run"
+                                "command": "npm publish dist/libs/sam"
                             }
                         ]
                     }
@@ -117,7 +117,7 @@
                                 "command": "npx monorepo-package-tool --rootModuleDir libs/core --destDir dist/libs/core"
                             },
                             {
-                                "command": "npm publish dist/libs/core --dry-run"
+                                "command": "npm publish dist/libs/core --access public"
                             }
                         ]
                     }
@@ -189,7 +189,7 @@
                                 "command": "npx monorepo-package-tool --rootModuleDir libs/s3 --destDir dist/libs/s3"
                             },
                             {
-                                "command": "npm publish dist/libs/s3 --dry-run"
+                                "command": "npm publish dist/libs/s3 --access public"
                             }
                         ]
                     }

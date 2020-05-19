@@ -38,8 +38,8 @@ export default createBuilder<S3DeployOptions>((options, context) => {
             }
             const stackSuffix = options.stackSuffix || undefined;
             const {
-                Bucket: bucket,
-                Distribution: distribution
+                bucket,
+                distribution
             } = await outputValueRetriever.getOutputValues(
                 map,
                 context,

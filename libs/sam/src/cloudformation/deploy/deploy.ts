@@ -140,7 +140,7 @@ async function getParameterOverrides(
                         `Retrieved parameter override ${key} from environment variable ${envKey}`
                     );
                     overrides[key] = value;
-                } else {
+                } else if (!parameters[key].Default) {
                     context.logger.fatal(
                         `Missing parameter override ${key}; deploy will likely fail`
                     );
