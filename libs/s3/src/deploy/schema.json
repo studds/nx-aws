@@ -35,6 +35,24 @@
                 "outputName": { "type": "string" }
             },
             "required": ["targetName", "outputName"]
+        },
+        "config": {
+            "type": "object",
+            "properties": {
+                "configFileName": { "type": "string" },
+                "importStackOutputs": {
+                    "description": "Map of values to import from stacks defined by other projects. Values are in the format {project-name}:{target-name}.{output-name}. Note this is not on the basis of exported values.",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                            "targetName": { "type": "string" },
+                            "outputName": { "type": "string" }
+                        }
+                    }
+                }
+            },
+            "required": ["configFileName", "importStackOutputs"]
         }
     },
     "additionalProperties": false,
