@@ -10,5 +10,6 @@
     "Nx",
     "Monorepo"
   ],
-  "builders": "builders.json"
+  "builders": "builders.json",
+  "main": "index.js"
 }

@@ -7,7 +7,7 @@ import {
     Target
 } from '@angular-devkit/architect';
 
-import { Observable, of, combineLatest, from } from 'rxjs';
+import { Observable, of, combineLatest } from 'rxjs';
 import { concatMap, map, tap, switchMap } from 'rxjs/operators';
 
 import { stripIndents } from '@angular-devkit/core/src/utils/literals';
@@ -16,8 +16,8 @@ import { runSam } from './run-sam';
 import { JsonObject } from '@angular-devkit/core';
 import { getFinalTemplateLocation } from '../cloudformation/get-final-template-location';
 import { copyFileSync, watch } from 'fs';
-import { getValidatedOptions, formatStackName } from '@nx-aws/core';
-import { loadEnvironmentVariablesForStackLambdas } from './loadEnvironmentVariablesForStackLambdas';
+import { getValidatedOptions } from '@nx-aws/core';
+import { loadEnvFromStack } from '../utils/loadEnvFromStack';
 
 try {
     require('dotenv').config();
@@ -37,7 +37,7 @@ export function nodeExecuteBuilderHandler(
     context: BuilderContext
 ): Observable<BuilderOutput> {
     const project = context.target?.project;
-    return loadEnvFromStack(options, project).pipe(
+    return loadEnvFromStack(options.mimicEnv, project).pipe(
         switchMap(() => runWaitUntilTargets(options)),
         concatMap(
             (v): Observable<BuilderOutput> => {
@@ -51,18 +51,6 @@ export function nodeExecuteBuilderHandler(
             }
         )
     );
-}
-
-function loadEnvFromStack(
-    options: SamExecuteBuilderOptions,
-    project: string | undefined
-): Observable<Record<string, string>> {
-    if (options.mimicEnv && project) {
-        const stackName = formatStackName(project, undefined, options.mimicEnv);
-        console.log(`Getting environment variables for ${stackName}`);
-        return from(loadEnvironmentVariablesForStackLambdas(stackName));
-    }
-    return of({});
 }
 
 function startBuild(
@@ -80,7 +68,7 @@ function startBuild(
                     );
                 }
                 return copyTemplate(options, context, template).pipe(
-                    switchMap(finalTemplateLocation => {
+                    switchMap((finalTemplateLocation) => {
                         return startBuildImpl(
                             options,
                             context,
@@ -127,7 +115,7 @@ function getBuilderOptions(
     const targetName = options.buildTarget;
     const validateOptions = getValidatedOptions(targetName, context);
     return validateOptions.pipe(
-        tap(builderOptions => {
+        tap((builderOptions) => {
             if (builderOptions.optimization) {
                 context.logger.warn(stripIndents`
                 ************************************************
@@ -161,7 +149,7 @@ function copyTemplate(
                 context,
                 templateFile
             ).pipe(
-                tap(finalTemplateLocation => {
+                tap((finalTemplateLocation) => {
                     copyFileSync(templateFile, finalTemplateLocation);
                 })
             );
@@ -173,7 +161,7 @@ function watchTemplate(
     context: BuilderContext,
     templateFile: string
 ): Observable<void> {
-    return new Observable(subscriber => {
+    return new Observable((subscriber) => {
         // initial emit to get everything moving
         subscriber.next();
         const listener = () => {

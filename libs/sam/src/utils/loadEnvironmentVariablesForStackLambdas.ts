@@ -1,5 +1,5 @@
-import CloudFormation = require('aws-sdk/clients/cloudformation');
-import Lambda = require('aws-sdk/clients/lambda');
+import CloudFormation from 'aws-sdk/clients/cloudformation';
+import Lambda from 'aws-sdk/clients/lambda';
 
 export async function loadEnvironmentVariablesForStackLambdas(
     stackName: string
