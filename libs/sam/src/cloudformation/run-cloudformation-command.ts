@@ -9,9 +9,9 @@ export function runCloudformationCommand(
     context: BuilderContext,
     subcommand: string
 ) {
-    return new Promise<BuilderOutput>((resolve, reject) => {
-        const args: string[] = ['cloudformation', subcommand];
-        Object.keys(options).forEach(arg => {
+    return new Promise<BuilderOutput>((resolve, _reject) => {
+        const args: string[] = [subcommand];
+        Object.keys(options).forEach((arg) => {
             const value = (options as any)[arg];
             if (value) {
                 if (Array.isArray(value)) {
@@ -22,7 +22,7 @@ export function runCloudformationCommand(
                     const keys = Object.keys(value);
                     if (keys.length > 0) {
                         args.push(`--${dasherize(arg)}`);
-                        keys.forEach(key => {
+                        keys.forEach((key) => {
                             // todo: avoid this cast to any
                             args.push(`${key}=${(value as any)[key]}`);
                         });
@@ -36,27 +36,20 @@ export function runCloudformationCommand(
                 }
             }
         });
-        const command = `aws`;
+        const command = `sam`;
+
         context.logger.log(
             'info',
             `Executing "${command} ${args.join(' ')}"...`
         );
         context.reportStatus(`Executing "${command} ${args[0]} ${args[1]}"...`);
         const child = childProcess.spawn(command, args, {
-            stdio: 'pipe',
+            stdio: 'inherit',
             env: process.env
         });
 
-        child.stdout.on('data', data => {
-            context.logger.info(data.toString());
-        });
-        child.stderr.on('data', data => {
-            context.logger.error(data.toString());
-            reject();
-        });
-
         context.reportStatus(`Done.`);
-        child.on('close', code => {
+        child.on('close', (code) => {
             resolve({ success: code === 0 });
         });
     });

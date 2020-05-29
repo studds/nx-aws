@@ -11,7 +11,6 @@ import Resource from 'cloudform-types/types/resource';
 import { CLOUDFORMATION_SCHEMA } from 'cloudformation-js-yaml-schema';
 import { getFinalTemplateLocation } from '../get-final-template-location';
 import { parse } from 'path';
-import { embedStateMachine } from './embedStateMachine';
 import { mapRelativePathsToAbsolute } from './mapRelativePathsToAbsolute';
 
 // todo: allow overriding some / all of these with environment variables
@@ -87,7 +86,6 @@ async function updateCloudFormationTemplate(
     await resolveSubStacks(cloudFormation, context);
     const inputPath = parse(options.templateFile).dir;
     mapRelativePathsToAbsolute(cloudFormation, inputPath);
-    embedStateMachine(cloudFormation, inputPath);
 }
 async function resolveSubStacks(
     cloudFormation: Template,

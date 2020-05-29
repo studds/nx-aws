@@ -30,6 +30,10 @@ const MAPPINGS: Record<string, ResourcePropertiesToMap | undefined> = {
     },
     'AWS::CloudFormation::Stack': { properties: ['TemplateURL'], skip: false },
     'AWS::Serverless::Application': { properties: ['Location'], skip: false },
+    'AWS::Serverless::StateMachine': {
+        properties: ['DefinitionUri'],
+        skip: false
+    },
     'AWS::Glue::Job': { properties: ['Command.ScriptLocation'], skip: false }
 };
 
@@ -47,7 +51,7 @@ export function mapRelativePathsToAbsolute(
             const properties = resource.Properties;
             const mapping = MAPPINGS[resource.Type];
             if (mapping && properties && !mapping.skip) {
-                mapping.properties.forEach(property => {
+                mapping.properties.forEach((property) => {
                     const value = properties[property];
                     if (typeof value === 'string') {
                         const path = resolve(inputDir, value);
