@@ -53,6 +53,13 @@
                 }
             },
             "required": ["configFileName", "importStackOutputs"]
+        },
+        "configValues": {
+            "description": "Map of config values - separate from config to allow easy overrides",
+            "type": "object",
+            "additionalProperties": {
+                "type": "string"
+            }
         }
     },
     "additionalProperties": false,

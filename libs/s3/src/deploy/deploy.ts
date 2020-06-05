@@ -5,7 +5,7 @@ import { switchMap } from 'rxjs/operators';
 import {
     OutputValueRetriever,
     ImportStackOutput,
-    ImportStackOutputs
+    ImportStackOutputs,
 } from '@nx-aws/core';
 import { writeFileSync } from 'fs';
 import { resolve } from 'path';
@@ -26,6 +26,7 @@ export interface S3DeployOptions extends JsonObject {
         importStackOutputs: ImportStackOutputs & JsonObject;
         configFileName: string;
     } | null;
+    configValues: Record<string, string> | null;
 }
 
 const outputValueRetriever = new OutputValueRetriever();
@@ -60,6 +61,9 @@ export default createBuilder<S3DeployOptions>((options, context) => {
                 stackSuffix
             );
             if (config) {
+                if (options.configValues) {
+                    Object.assign(configFile, options.configValues);
+                }
                 // write any values imported for config to the output directory
                 writeFileSync(
                     resolve(outputDir, config.configFileName),
@@ -77,7 +81,7 @@ export default createBuilder<S3DeployOptions>((options, context) => {
             );
             return context.scheduleBuilder('@nrwl/workspace:run-commands', {
                 parallel: false,
-                commands
+                commands,
             });
         }),
         switchMap((run) => run.output)
@@ -91,7 +95,7 @@ async function getOutputDir(context: BuilderContext) {
     }
     const buildOptions = await context.getTargetOptions({
         project,
-        target: 'build'
+        target: 'build',
     });
     const outputDir = buildOptions.outputPath;
     if (typeof outputDir !== 'string') {
@@ -115,19 +119,19 @@ function normaliseResources(
         {
             include: dynamicResources,
             cacheControl: 'public, max-age=1, stale-while-revalidate=300',
-            invalidate: true
+            invalidate: true,
         },
         {
             include: ['*.js', '*.css', '*.woff'],
             cacheControl: 'public, max-age=315360000, immutable',
-            invalidate: false
+            invalidate: false,
         },
         {
             include: [],
             cacheControl:
                 'public, max-age=86400, stale-while-revalidate=315360000',
-            invalidate: false
-        }
+            invalidate: false,
+        },
     ];
 }
 
@@ -175,7 +179,7 @@ function appendInvalidationCommand(
             .map((path) => `"/${path}"`)
             .join(' ');
         commands.push({
-            command: `aws cloudfront create-invalidation --distribution-id ${distribution} --paths ${paths}`
+            command: `aws cloudfront create-invalidation --distribution-id ${distribution} --paths ${paths}`,
         });
     }
 }
