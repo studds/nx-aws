@@ -119,7 +119,7 @@ Add the following to your `angular.json`:
                     "templateFile": "apps/api/template.yaml",
                     "outputTemplateFile": "dist/apps/api/serverless-output.yaml",
                     "s3Prefix": "api",
-                    "s3ArtefactsBucket": "my-artefacts-bucket"
+                    "s3Bucket": "my-artefacts-bucket"
                 },
                 "configurations": {
                     "production": {}
@@ -177,7 +177,7 @@ Add the following to `angular.json`:
                     "templateFile": "dist/apps/api/serverless-output.yaml",
                     "s3Prefix": "api",
                     "capabilities": ["CAPABILITY_IAM", "CAPABILITY_AUTO_EXPAND"],
-                    "s3ArtefactsBucket": "my-artefacts-bucket"
+                    "s3Bucket": "my-artefacts-bucket"
                 },
                 "configurations": {
                     "production": {}
