@@ -16,13 +16,15 @@ export function getEntriesFromCloudFormation(
     context: BuilderContext
 ): Array<Entry> {
     const cf = loadCloudFormationTemplate(options.template);
+    // @ts-ignore
+    const globals = cf .Globals;
     const resources = cf.Resources;
     if (!resources) {
         throw new Error("CloudFormation template didn't contain any resources");
     }
     return Object.keys(resources)
         .map(name => {
-            return getEntry(resources[name], options, context);
+            return getEntry(resources[name], options, context, globals);
         })
         .filter((s): s is Entry => !!s);
 }
@@ -30,7 +32,8 @@ export function getEntriesFromCloudFormation(
 function getEntry(
     resource: Resource,
     options: ExtendedBuildBuilderOptions,
-    context: BuilderContext
+    context: BuilderContext,
+    globalProperties: {[key: string]: any},
 ): Entry | undefined {
     const properties = resource.Properties;
     if (!properties) {
@@ -42,7 +45,7 @@ function getEntry(
 
     const srcMapInstall = resolve(__dirname, 'source-map-install.js');
     if (resource.Type === 'AWS::Serverless::Function') {
-        return getEntryForFunction(properties, options, srcMapInstall);
+        return getEntryForFunction(properties, options, srcMapInstall, globalProperties.Function);
     } else if (resource.Type === 'AWS::Serverless::LayerVersion') {
         return getEntryForLayer(properties, options, context, srcMapInstall);
     } else {
@@ -52,11 +55,14 @@ function getEntry(
 function getEntryForFunction(
     properties: { [key: string]: any },
     options: ExtendedBuildBuilderOptions,
-    srcMapInstall: string
+    srcMapInstall: string,
+    globalProperties?: { [key: string]: any },
 ) {
     const { dir } = parse(options.template);
-    const codeUri: string = properties.CodeUri;
-    const handler: string = properties.Handler;
+    // fallback to global CodeUri if function doesn't specify one
+    const codeUri: string = properties.CodeUri || globalProperties?.CodeUri;
+    // fallback to global Handler if function doesn't specify one
+    const handler: string = properties.Handler || globalProperties?.Handler;
     const handlerParts = handler.split('.');
     handlerParts.pop();
     const fileName = [...handlerParts, 'ts'].join('.');
