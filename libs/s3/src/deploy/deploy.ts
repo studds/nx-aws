@@ -60,7 +60,7 @@ export default createBuilder<S3DeployOptions>((options, context) => {
                 context,
                 stackSuffix
             );
-            if (config) {
+            if (config && config.configFileName) {
                 if (options.configValues) {
                     Object.assign(configFile, options.configValues);
                 }
