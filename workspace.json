@@ -1,270 +1,267 @@
 {
-    "version": 1,
-    "projects": {
-        "sam": {
-            "root": "libs/sam",
-            "sourceRoot": "libs/sam/src",
-            "projectType": "library",
-            "schematics": {},
-            "architect": {
-                "lint": {
-                    "builder": "@nrwl/linter:lint",
-                    "options": {
-                        "linter": "eslint",
-                        "config": "libs/sam/.eslintrc",
-                        "tsConfig": [
-                            "libs/sam/tsconfig.lib.json",
-                            "libs/sam/tsconfig.spec.json"
-                        ],
-                        "exclude": ["**/node_modules/**", "!libs/sam/**"]
-                    }
-                },
-                "test": {
-                    "builder": "@nrwl/jest:jest",
-                    "options": {
-                        "jestConfig": "libs/sam/jest.config.js",
-                        "tsConfig": "libs/sam/tsconfig.spec.json"
-                    }
-                },
-                "build": {
-                    "builder": "@nrwl/node:package",
-                    "options": {
-                        "outputPath": "dist/libs/sam",
-                        "tsConfig": "libs/sam/tsconfig.lib.json",
-                        "packageJson": "libs/sam/package.json",
-                        "main": "libs/sam/src/index.ts",
-                        "assets": [
-                            "libs/sam/*.md",
-                            {
-                                "glob": "**/*.json",
-                                "input": "libs/sam/src",
-                                "output": ""
-                            }
-                        ]
-                    }
-                },
-                "publish": {
-                    "builder": "@nrwl/workspace:run-commands",
-                    "options": {
-                        "parallel": false,
-                        "commands": [
-                            {
-                                "command": "npx monorepo-package-tool --rootModuleDir libs/sam --destDir dist/libs/sam"
-                            },
-                            {
-                                "command": "npm publish dist/libs/sam"
-                            }
-                        ]
-                    }
-                },
-                "pack": {
-                    "builder": "@nrwl/workspace:run-commands",
-                    "options": {
-                        "parallel": false,
-                        "commands": [
-                            {
-                                "command": "npx monorepo-package-tool --rootModuleDir libs/sam --destDir dist/libs/sam"
-                            },
-                            {
-                                "command": "npm pack dist/libs/sam"
-                            }
-                        ]
-                    }
-                }
-            }
+  "version": 1,
+  "projects": {
+    "sam": {
+      "root": "libs/sam",
+      "sourceRoot": "libs/sam/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/sam/tsconfig.lib.json",
+              "libs/sam/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/sam/**"]
+          }
         },
-        "core": {
-            "root": "libs/core",
-            "sourceRoot": "libs/core/src",
-            "projectType": "library",
-            "schematics": {},
-            "architect": {
-                "lint": {
-                    "builder": "@nrwl/linter:lint",
-                    "options": {
-                        "linter": "eslint",
-                        "config": "libs/core/.eslintrc",
-                        "tsConfig": [
-                            "libs/core/tsconfig.lib.json",
-                            "libs/core/tsconfig.spec.json"
-                        ],
-                        "exclude": ["**/node_modules/**", "!libs/core/**"]
-                    }
-                },
-                "test": {
-                    "builder": "@nrwl/jest:jest",
-                    "options": {
-                        "jestConfig": "libs/core/jest.config.js",
-                        "tsConfig": "libs/core/tsconfig.spec.json"
-                    }
-                },
-                "build": {
-                    "builder": "@nrwl/node:package",
-                    "options": {
-                        "outputPath": "dist/libs/core",
-                        "tsConfig": "libs/core/tsconfig.lib.json",
-                        "packageJson": "libs/core/package.json",
-                        "main": "libs/core/src/index.ts",
-                        "assets": ["libs/core/*.md"]
-                    }
-                },
-                "publish": {
-                    "builder": "@nrwl/workspace:run-commands",
-                    "options": {
-                        "parallel": false,
-                        "commands": [
-                            {
-                                "command": "npx monorepo-package-tool --rootModuleDir libs/core --destDir dist/libs/core"
-                            },
-                            {
-                                "command": "npm publish dist/libs/core --access public"
-                            }
-                        ]
-                    }
-                },
-                "pack": {
-                    "builder": "@nrwl/workspace:run-commands",
-                    "options": {
-                        "parallel": false,
-                        "commands": [
-                            {
-                                "command": "npx monorepo-package-tool --rootModuleDir libs/core --destDir dist/libs/core"
-                            },
-                            {
-                                "command": "npm pack dist/libs/core"
-                            }
-                        ]
-                    }
-                }
-            }
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/sam/jest.config.js",
+            "tsConfig": "libs/sam/tsconfig.spec.json"
+          }
         },
-        "s3": {
-            "root": "libs/s3",
-            "sourceRoot": "libs/s3/src",
-            "projectType": "library",
-            "schematics": {},
-            "architect": {
-                "lint": {
-                    "builder": "@nrwl/linter:lint",
-                    "options": {
-                        "linter": "eslint",
-                        "config": "libs/s3/.eslintrc",
-                        "tsConfig": [
-                            "libs/s3/tsconfig.lib.json",
-                            "libs/s3/tsconfig.spec.json"
-                        ],
-                        "exclude": ["**/node_modules/**", "!libs/s3/**"]
-                    }
-                },
-                "test": {
-                    "builder": "@nrwl/jest:jest",
-                    "options": {
-                        "jestConfig": "libs/s3/jest.config.js",
-                        "tsConfig": "libs/s3/tsconfig.spec.json"
-                    }
-                },
-                "build": {
-                    "builder": "@nrwl/node:package",
-                    "options": {
-                        "outputPath": "dist/libs/s3",
-                        "tsConfig": "libs/s3/tsconfig.lib.json",
-                        "packageJson": "libs/s3/package.json",
-                        "main": "libs/s3/src/index.ts",
-                        "assets": [
-                            "libs/s3/*.md",
-                            {
-                                "glob": "**/*.json",
-                                "input": "libs/s3/src",
-                                "output": ""
-                            }
-                        ]
-                    }
-                },
-                "publish": {
-                    "builder": "@nrwl/workspace:run-commands",
-                    "options": {
-                        "parallel": false,
-                        "commands": [
-                            {
-                                "command": "npx monorepo-package-tool --rootModuleDir libs/s3 --destDir dist/libs/s3"
-                            },
-                            {
-                                "command": "npm publish dist/libs/s3 --access public"
-                            }
-                        ]
-                    }
-                },
-                "pack": {
-                    "builder": "@nrwl/workspace:run-commands",
-                    "options": {
-                        "parallel": false,
-                        "commands": [
-                            {
-                                "command": "npx monorepo-package-tool --rootModuleDir libs/s3 --destDir dist/libs/s3"
-                            },
-                            {
-                                "command": "npm pack dist/libs/s3"
-                            }
-                        ]
-                    }
-                }
-            }
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/sam",
+            "tsConfig": "libs/sam/tsconfig.lib.json",
+            "packageJson": "libs/sam/package.json",
+            "main": "libs/sam/src/index.ts",
+            "assets": [
+              "libs/sam/*.md",
+              {
+                "glob": "**/*.json",
+                "input": "libs/sam/src",
+                "output": ""
+              }
+            ]
+          }
+        },
+        "publish": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "npx monorepo-package-tool --rootModuleDir libs/sam --destDir dist/libs/sam"
+              },
+              {
+                "command": "npm publish dist/libs/sam"
+              }
+            ]
+          }
+        },
+        "pack": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "npx monorepo-package-tool --rootModuleDir libs/sam --destDir dist/libs/sam"
+              },
+              {
+                "command": "npm pack dist/libs/sam"
+              }
+            ]
+          }
         }
+      }
     },
-    "cli": {
-        "defaultCollection": "@nrwl/workspace"
-    },
-    "schematics": {
-        "@nrwl/workspace": {
-            "library": {
-                "linter": "eslint"
-            }
+    "core": {
+      "root": "libs/core",
+      "sourceRoot": "libs/core/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/core/tsconfig.lib.json",
+              "libs/core/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/core/**"]
+          }
         },
-        "@nrwl/cypress": {
-            "cypress-project": {
-                "linter": "eslint"
-            }
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/core/jest.config.js",
+            "tsConfig": "libs/core/tsconfig.spec.json"
+          }
         },
-        "@nrwl/react": {
-            "application": {
-                "linter": "eslint"
-            },
-            "library": {
-                "linter": "eslint"
-            }
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/core",
+            "tsConfig": "libs/core/tsconfig.lib.json",
+            "packageJson": "libs/core/package.json",
+            "main": "libs/core/src/index.ts",
+            "assets": ["libs/core/*.md"]
+          }
         },
-        "@nrwl/next": {
-            "application": {
-                "linter": "eslint"
-            }
+        "publish": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "npx monorepo-package-tool --rootModuleDir libs/core --destDir dist/libs/core"
+              },
+              {
+                "command": "npm publish dist/libs/core --access public"
+              }
+            ]
+          }
         },
-        "@nrwl/web": {
-            "application": {
-                "linter": "eslint"
-            }
-        },
-        "@nrwl/node": {
-            "application": {
-                "linter": "eslint"
-            },
-            "library": {
-                "linter": "eslint"
-            }
-        },
-        "@nrwl/nx-plugin": {
-            "plugin": {
-                "linter": "eslint"
-            }
-        },
-        "@nrwl/nest": {
-            "application": {
-                "linter": "eslint"
-            }
-        },
-        "@nrwl/express": {
-            "application": {
-                "linter": "eslint"
-            }
+        "pack": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "npx monorepo-package-tool --rootModuleDir libs/core --destDir dist/libs/core"
+              },
+              {
+                "command": "npm pack dist/libs/core"
+              }
+            ]
+          }
         }
+      }
+    },
+    "s3": {
+      "root": "libs/s3",
+      "sourceRoot": "libs/s3/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/s3/tsconfig.lib.json",
+              "libs/s3/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/s3/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/s3/jest.config.js",
+            "tsConfig": "libs/s3/tsconfig.spec.json"
+          }
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/libs/s3",
+            "tsConfig": "libs/s3/tsconfig.lib.json",
+            "packageJson": "libs/s3/package.json",
+            "main": "libs/s3/src/index.ts",
+            "assets": [
+              "libs/s3/*.md",
+              {
+                "glob": "**/*.json",
+                "input": "libs/s3/src",
+                "output": ""
+              }
+            ]
+          }
+        },
+        "publish": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "npx monorepo-package-tool --rootModuleDir libs/s3 --destDir dist/libs/s3"
+              },
+              {
+                "command": "npm publish dist/libs/s3 --access public"
+              }
+            ]
+          }
+        },
+        "pack": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "npx monorepo-package-tool --rootModuleDir libs/s3 --destDir dist/libs/s3"
+              },
+              {
+                "command": "npm pack dist/libs/s3"
+              }
+            ]
+          }
+        }
+      }
     }
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/workspace"
+  },
+  "schematics": {
+    "@nrwl/workspace": {
+      "library": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/cypress": {
+      "cypress-project": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/react": {
+      "application": {
+        "linter": "eslint"
+      },
+      "library": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/next": {
+      "application": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/web": {
+      "application": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/node": {
+      "application": {
+        "linter": "eslint"
+      },
+      "library": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/nx-plugin": {
+      "plugin": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/nest": {
+      "application": {
+        "linter": "eslint"
+      }
+    },
+    "@nrwl/express": {
+      "application": {
+        "linter": "eslint"
+      }
+    }
+  }
 }
