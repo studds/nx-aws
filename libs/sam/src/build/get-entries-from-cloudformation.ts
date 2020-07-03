@@ -1,6 +1,9 @@
+import {
+    Globals,
+} from '@nx-aws/cloudformation-sam-types';
 import Resource from 'cloudform-types/types/resource';
 import { resolve, parse, join, relative } from 'path';
-import { loadCloudFormationTemplate } from '../utils/load-cloud-formation-template';
+import { loadCloudFormationTemplate } from '@nx-aws/sam';
 import { ExtendedBuildBuilderOptions } from './build';
 import { isFile } from '@angular-devkit/core/node/fs';
 import { readFileSync, writeFileSync } from 'fs';
@@ -16,8 +19,7 @@ export function getEntriesFromCloudFormation(
     context: BuilderContext
 ): Array<Entry> {
     const cf = loadCloudFormationTemplate(options.template);
-    // @ts-ignore
-    const globals = cf .Globals;
+    const globals = cf.Globals;
     const resources = cf.Resources;
     if (!resources) {
         throw new Error("CloudFormation template didn't contain any resources");
@@ -33,7 +35,7 @@ function getEntry(
     resource: Resource,
     options: ExtendedBuildBuilderOptions,
     context: BuilderContext,
-    globalProperties: {[key: string]: any},
+    globalProperties?: Globals,
 ): Entry | undefined {
     const properties = resource.Properties;
     if (!properties) {
@@ -45,7 +47,7 @@ function getEntry(
 
     const srcMapInstall = resolve(__dirname, 'source-map-install.js');
     if (resource.Type === 'AWS::Serverless::Function') {
-        return getEntryForFunction(properties, options, srcMapInstall, globalProperties.Function);
+        return getEntryForFunction(properties, options, srcMapInstall, globalProperties?.Function);
     } else if (resource.Type === 'AWS::Serverless::LayerVersion') {
         return getEntryForLayer(properties, options, context, srcMapInstall);
     } else {
