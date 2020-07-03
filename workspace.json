@@ -206,6 +206,72 @@
           }
         }
       }
+    },
+    "cloudformation-sam-types": {
+      "root": "libs/cloudformation-sam-types",
+      "sourceRoot": "libs/cloudformation-sam-types/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/cloudformation-sam-types/.eslintrc",
+            "tsConfig": [
+              "libs/cloudformation-sam-types/tsconfig.lib.json",
+              "libs/cloudformation-sam-types/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/cloudformation-sam-types/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/cloudformation-sam-types/jest.config.js",
+            "tsConfig": "libs/cloudformation-sam-types/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        },
+          "build": {
+              "builder": "@nrwl/node:package",
+              "options": {
+                  "outputPath": "dist/libs/cloudformation-sam-types",
+                  "tsConfig": "libs/cloudformation-sam-types/tsconfig.lib.json",
+                  "packageJson": "libs/cloudformation-sam-types/package.json",
+                  "main": "libs/cloudformation-sam-types/src/index.ts",
+                  "assets": ["libs/cloudformation-sam-types/*.md"]
+              }
+          },
+          "publish": {
+              "builder": "@nrwl/workspace:run-commands",
+              "options": {
+                  "parallel": false,
+                  "commands": [
+                      {
+                          "command": "npx monorepo-package-tool --rootModuleDir libs/cloudformation-sam-types --destDir dist/libs/cloudformation-sam-types"
+                      },
+                      {
+                          "command": "npm publish dist/libs/cloudformation-sam-types --access public"
+                      }
+                  ]
+              }
+          },
+          "pack": {
+              "builder": "@nrwl/workspace:run-commands",
+              "options": {
+                  "parallel": false,
+                  "commands": [
+                      {
+                          "command": "npx monorepo-package-tool --rootModuleDir libs/cloudformation-sam-types --destDir dist/libs/cloudformation-sam-types"
+                      },
+                      {
+                          "command": "npm pack dist/libs/cloudformation-sam-types"
+                      }
+                  ]
+              }
+          }
+      }
     }
   },
   "cli": {
