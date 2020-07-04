@@ -24,7 +24,8 @@
     "paths": {
       "@nx-aws/sam": ["libs/sam/src/index.ts"],
       "@nx-aws/core": ["libs/core/src/index.ts"],
-      "@nx-aws/s3": ["libs/s3/src/index.ts"]
+      "@nx-aws/s3": ["libs/s3/src/index.ts"],
+      "@nx-aws/cloudformation-sam-types": ["libs/cloudformation-sam-types/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -19,6 +19,9 @@
         },
         "s3": {
             "tags": []
+        },
+        "cloudformation-sam-types":{
+            "tags": []
         }
     }
 }
