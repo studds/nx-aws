@@ -4,6 +4,9 @@ import { getValidatedOptions } from './getValidatedOptions';
 import { BuilderContext } from '@angular-devkit/architect';
 import { ImportStackOutputs } from './ImportStackOutputs';
 
+// force AWS SDK to load config, in case region is set there
+process.env.AWS_SDK_LOAD_CONFIG = '1';
+
 export class OutputValueRetriever {
     private cfCache: Record<string, CloudFormation> = {};
     private regionByTarget: Record<string, string | undefined> = {};
@@ -49,7 +52,7 @@ export class OutputValueRetriever {
             context
         );
         const output = outputs.find(
-            o =>
+            (o) =>
                 o.OutputKey &&
                 o.OutputKey.toLowerCase() === outputName.toLowerCase()
         );

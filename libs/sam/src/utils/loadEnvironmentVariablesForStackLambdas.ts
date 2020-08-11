@@ -1,6 +1,9 @@
 import CloudFormation from 'aws-sdk/clients/cloudformation';
 import Lambda from 'aws-sdk/clients/lambda';
 
+// force AWS SDK to load config, in case region is set there
+process.env.AWS_SDK_LOAD_CONFIG = '1';
+
 export async function loadEnvironmentVariablesForStackLambdas(
     stackName: string
 ) {
