@@ -1,0 +1,12 @@
+{
+  "$schema": "../../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "name": "s3",
+  "version": "0.0.1",
+  "schematics": {
+    "s3": {
+      "factory": "./src/schematics/s3/schematic",
+      "schema": "./src/schematics/s3/schema.json",
+      "description": "s3 schematic"
+    }
+  }
+}

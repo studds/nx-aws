@@ -1,0 +1,13 @@
+{
+    "name": "@nx-aws/core",
+    "description": "Core of @nx-aws",
+    "keywords": [
+        "AWS",
+        "Serverless",
+        "Angular CLI",
+        "Workspace",
+        "Nx",
+        "Monorepo"
+    ],
+    "main": "src/index.js"
+}
