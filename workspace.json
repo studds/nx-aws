@@ -62,7 +62,7 @@
                                 "command": "npx monorepo-package-tool --rootModuleDir packages/sam --destDir dist/packages/sam"
                             },
                             {
-                                "command": "npm publish dist/packages/sam"
+                                "command": "npm publish dist/packages/sam --access public --tag $NPM_TAG"
                             }
                         ]
                     }
@@ -161,7 +161,7 @@
                                 "command": "npx monorepo-package-tool --rootModuleDir packages/core --destDir dist/packages/core"
                             },
                             {
-                                "command": "npm publish dist/packages/core --access public"
+                                "command": "npm publish dist/packages/core --access public --tag $NPM_TAG"
                             }
                         ]
                     }
@@ -260,7 +260,7 @@
                                 "command": "npx monorepo-package-tool --rootModuleDir packages/s3 --destDir dist/packages/s3"
                             },
                             {
-                                "command": "npm publish dist/packages/s3 --access public"
+                                "command": "npm publish dist/packages/s3 --access public --tag $NPM_TAG"
                             }
                         ]
                     }
