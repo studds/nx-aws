@@ -5,13 +5,12 @@ import Template from 'cloudform-types/types/template';
 import { from } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { writeFileSync } from 'fs';
-import { dump } from 'js-yaml';
 import Resource from 'cloudform-types/types/resource';
-import { CLOUDFORMATION_SCHEMA } from 'cloudformation-js-yaml-schema';
 import { getFinalTemplateLocation } from '../get-final-template-location';
 import { parse } from 'path';
 import { mapRelativePathsToAbsolute } from './mapRelativePathsToAbsolute';
 import { loadCloudFormationTemplate } from '../../../utils/load-cloud-formation-template';
+import { dumpCloudformationTemplate } from '../../../utils/dumpCloudformationTemplate';
 
 // todo: allow overriding some / all of these with environment variables
 interface IPackageOptions extends JsonObject {
@@ -62,7 +61,7 @@ export default createBuilder<IPackageOptions>(
                 options.templateFile = updatedTemplateFile;
                 writeFileSync(
                     updatedTemplateFile,
-                    dump(cloudFormation, { schema: CLOUDFORMATION_SCHEMA }),
+                    dumpCloudformationTemplate(cloudFormation),
                     {
                         encoding: 'utf-8',
                     }

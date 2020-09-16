@@ -7,6 +7,7 @@ import { readFileSync, writeFileSync } from 'fs';
 import { BuilderContext } from '@angular-devkit/architect';
 import { sync as mkdirp } from 'mkdirp';
 import { Entry } from 'webpack';
+import { getLambdaSourcePath } from '../../utils/getLambdaSourcePath';
 
 /**
  * Read the CloudFormation template yaml, and use it to identify our input files.
@@ -23,12 +24,13 @@ export function getEntriesFromCloudFormation(
     }
     return Object.keys(resources)
         .map((name) => {
-            return getEntry(resources[name], options, context, globals);
+            return getEntry(name, resources[name], options, context, globals);
         })
         .filter((s): s is Entry => !!s);
 }
 
 function getEntry(
+    resourceName: string,
     resource: Resource,
     options: ExtendedBuildBuilderOptions,
     context: BuilderContext,
@@ -45,6 +47,7 @@ function getEntry(
     const srcMapInstall = resolve(__dirname, 'source-map-install.js');
     if (resource.Type === 'AWS::Serverless::Function') {
         return getEntryForFunction(
+            resourceName,
             properties,
             options,
             srcMapInstall,
@@ -57,21 +60,18 @@ function getEntry(
     }
 }
 function getEntryForFunction(
+    resourceName: string,
     properties: { [key: string]: any },
     options: ExtendedBuildBuilderOptions,
     srcMapInstall: string,
     globalProperties?: { [key: string]: any }
 ) {
-    const { dir } = parse(options.template);
-    // fallback to global CodeUri if function doesn't specify one
-    const codeUri: string = properties.CodeUri || globalProperties?.CodeUri;
-    // fallback to global Handler if function doesn't specify one
-    const handler: string = properties.Handler || globalProperties?.Handler;
-    const handlerParts = handler.split('.');
-    handlerParts.pop();
-    const fileName = [...handlerParts, 'ts'].join('.');
-    const filePath = join(codeUri, fileName);
-    const src = resolve(dir, filePath);
+    const { src, dir } = getLambdaSourcePath(
+        options.template,
+        resourceName,
+        properties,
+        globalProperties
+    );
     const entryName = relative(dir, src).replace('.ts', '');
     return { [entryName]: [srcMapInstall, src] };
 }

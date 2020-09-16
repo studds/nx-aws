@@ -1,21 +1,29 @@
 {
-    "$schema": "../../node_modules/@angular-devkit/schematics/collection-schema.json",
-    "name": "sam",
-    "version": "0.0.1",
-    "schematics": {
-        "init": {
-            "factory": "./src/schematics/init/init",
-            "schema": "./src/schematics/init/schema.json",
-            "description": "Initialize the @nx-aws/sam plugin",
-            "aliases": ["ng-add"],
-            "hidden": true
-        },
-
-        "application": {
-            "factory": "./src/schematics/application/application",
-            "schema": "./src/schematics/application/schema.json",
-            "aliases": ["app"],
-            "description": "Create an AWS SAM application"
-        }
+  "$schema": "../../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "name": "sam",
+  "version": "0.0.1",
+  "schematics": {
+    "init": {
+      "factory": "./src/schematics/init/init",
+      "schema": "./src/schematics/init/schema.json",
+      "description": "Initialize the @nx-aws/sam plugin",
+      "aliases": [
+        "ng-add"
+      ],
+      "hidden": true
+    },
+    "application": {
+      "factory": "./src/schematics/application/application",
+      "schema": "./src/schematics/application/schema.json",
+      "aliases": [
+        "app"
+      ],
+      "description": "Create an AWS SAM application"
+    },
+    "update-lambdas": {
+      "factory": "./src/schematics/update-lambdas/schematic",
+      "schema": "./src/schematics/update-lambdas/schema.json",
+      "description": "Parse the SAM template and update lambda functions to match"
     }
+  }
 }

@@ -8,7 +8,7 @@ import Template from 'cloudform-types/types/template';
  * @since 0.7.0
  */
 export interface Globals {
-    Function?: Function;
+    Function?: FunctionResource;
 }
 
 /**
@@ -16,7 +16,7 @@ export interface Globals {
  *
  * @since 0.7.0
  */
-export interface Function {
+export interface FunctionResource {
     Handler?: string;
     CodeUri?:
         | string
@@ -27,12 +27,20 @@ export interface Function {
           };
 }
 
+export type ParsedSamTemplate = Template & {
+    Globals: Globals;
+};
+
 export function loadCloudFormationTemplate(
     templatePath: string
-): Template & { Globals: Globals } {
+): ParsedSamTemplate {
     const yaml = readFileSync(templatePath, { encoding: 'utf-8' });
-    const cf: Template & { Globals: Globals } = load(yaml, {
+    const cf: ParsedSamTemplate = parseCloudFormationTemplate(yaml);
+    return cf;
+}
+
+export function parseCloudFormationTemplate(yaml: string): ParsedSamTemplate {
+    return load(yaml, {
         schema: CLOUDFORMATION_SCHEMA,
     });
-    return cf;
 }

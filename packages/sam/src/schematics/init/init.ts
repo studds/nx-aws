@@ -23,7 +23,7 @@ function moveDependency(): Rule {
     });
 }
 
-export default function (schema: Schema) {
+export default function (schema: Schema): Rule {
     return chain([
         setDefaultCollection('@nx-aws/sam'),
         addPackageWithInit('@nrwl/node', schema),
