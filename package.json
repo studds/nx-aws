@@ -48,6 +48,7 @@
         "@nrwl/node": "^10.0.12",
         "@nrwl/nx-plugin": "^10.0.12",
         "@nrwl/workspace": "^10.0.12",
+        "@types/aws-lambda": "^8.10.62",
         "aws-sdk": "^2.709.0",
         "cloudform-types": "^6.1.0",
         "cloudformation-js-yaml-schema": "^0.4.2",
@@ -56,6 +57,7 @@
         "rxjs": "^6.6.0",
         "source-map-support": "^0.5.19",
         "strip-json-comments": "^3.1.0",
+        "ts-essentials": "^7.0.0",
         "webpack-merge": "^5.1.1"
     },
     "devDependencies": {

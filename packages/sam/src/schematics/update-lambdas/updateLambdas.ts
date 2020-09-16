@@ -1,5 +1,5 @@
 import { chain, Rule, Tree } from '@angular-devkit/schematics';
-import { getProjectConfig } from '@nrwl/workspace';
+import { formatFiles, getProjectConfig } from '@nrwl/workspace';
 import Resource from 'cloudform-types/types/resource';
 import { getLambdaSourcePath } from '../../utils/getLambdaSourcePath';
 import { SamFunctionProperties } from '../../utils/SamFunctionProperties';
@@ -9,26 +9,31 @@ import { UpdateLambdasSchematicSchema } from './schema';
 
 export default function (options: UpdateLambdasSchematicSchema): Rule {
     return chain([
-        (tree) => {
-            const project = getProjectConfig(tree, options.projectName);
-            const templateFile: string | undefined =
-                project?.architect?.package?.options?.templateFile;
-            if (!templateFile) {
-                throw new Error(
-                    `Couldn't find templateFile option on ${project}:package`
-                );
-            }
-            const template = loadYamlFile(tree, templateFile);
-            const resources = template.Resources;
-            if (!resources) {
-                return;
-            }
-            updateLamdas(tree, resources, templateFile);
-        },
+        updateLambdasInTree(options),
+        formatFiles({ skipFormat: false }),
     ]);
 }
 
-function updateLamdas(
+function updateLambdasInTree(options: UpdateLambdasSchematicSchema) {
+    return (tree: Tree): void => {
+        const project = getProjectConfig(tree, options.projectName);
+        const templateFile: string | undefined =
+            project?.architect?.package?.options?.templateFile;
+        if (!templateFile) {
+            throw new Error(
+                `Couldn't find templateFile option on ${project}:package`
+            );
+        }
+        const template = loadYamlFile(tree, templateFile);
+        const resources = template.Resources;
+        if (!resources) {
+            return;
+        }
+        updateLambdasFromResources(tree, resources, templateFile);
+    };
+}
+
+function updateLambdasFromResources(
     tree: Tree,
     resources: Record<string, Resource>,
     templatePath: string
