@@ -120,7 +120,7 @@ function normaliseResources(
     return [
         {
             include: dynamicResources,
-            cacheControl: 'public, max-age=1, stale-while-revalidate=300',
+            cacheControl: 'no-cache, stale-while-revalidate=300',
             invalidate: true,
         },
         {
