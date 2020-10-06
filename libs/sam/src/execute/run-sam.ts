@@ -1,7 +1,7 @@
 import { BuilderOutput, BuilderContext } from '@angular-devkit/architect';
-import * as childProcess from 'child_process';
 import { SamExecuteBuilderOptions } from './options';
 import { Observable } from 'rxjs';
+import { spawn } from 'cross-spawn';
 
 export function runSam(
     options: SamExecuteBuilderOptions,
@@ -32,7 +32,7 @@ export function runSam(
             'info',
             `Executing "${command} ${args.join(' ')}"...`
         );
-        const child = childProcess.spawn(command, args, {
+        const child = spawn(command, args, {
             stdio: 'pipe',
             env: process.env
         });
