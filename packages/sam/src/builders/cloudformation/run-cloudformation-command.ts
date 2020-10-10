@@ -1,6 +1,6 @@
 import { JsonObject } from '@angular-devkit/core';
 import { BuilderOutput, BuilderContext } from '@angular-devkit/architect';
-import * as childProcess from 'child_process';
+import { spawn } from 'cross-spawn';
 import { dasherize } from '@angular-devkit/core/src/utils/strings';
 import { CloudFormationDeployOptions } from './deploy/CloudFormationDeployOptions';
 
@@ -9,7 +9,7 @@ export function runCloudformationCommand(
     context: BuilderContext,
     subcommand: string
 ) {
-    return new Promise<BuilderOutput>((resolve, _reject) => {
+    return new Promise<BuilderOutput>((resolve) => {
         const args: string[] = [subcommand];
         Object.keys(options).forEach((arg) => {
             const value = (options as any)[arg];
@@ -43,9 +43,9 @@ export function runCloudformationCommand(
             `Executing "${command} ${args.join(' ')}"...`
         );
         context.reportStatus(`Executing "${command} ${args[0]} ${args[1]}"...`);
-        const child = childProcess.spawn(command, args, {
+        const child = spawn(command, args, {
             stdio: 'inherit',
-            env: process.env
+            env: process.env,
         });
 
         context.reportStatus(`Done.`);

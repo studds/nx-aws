@@ -1,5 +1,5 @@
 import { BuilderOutput, BuilderContext } from '@angular-devkit/architect';
-import * as childProcess from 'child_process';
+import { spawn } from 'cross-spawn';
 import { SamExecuteBuilderOptions } from './options';
 import { Observable } from 'rxjs';
 
@@ -8,12 +8,12 @@ export function runSam(
     context: BuilderContext,
     templatePath: string
 ): Observable<BuilderOutput> {
-    return new Observable<BuilderOutput>(subscriber => {
+    return new Observable<BuilderOutput>((subscriber) => {
         const args: string[] = [
             'local',
             'start-api',
             '--template',
-            templatePath
+            templatePath,
         ];
         if (options.host) {
             args.push('--host', options.host);
@@ -32,20 +32,20 @@ export function runSam(
             'info',
             `Executing "${command} ${args.join(' ')}"...`
         );
-        const child = childProcess.spawn(command, args, {
+        const child = spawn(command, args, {
             stdio: 'pipe',
-            env: process.env
+            env: process.env,
         });
 
-        child.stdout.on('data', data => {
+        child.stdout.on('data', (data) => {
             context.logger.info(data.toString());
         });
-        child.stderr.on('data', data => {
+        child.stderr.on('data', (data) => {
             context.logger.error(data.toString());
         });
 
         context.reportStatus(`Done.`);
-        child.on('close', code => {
+        child.on('close', (code) => {
             subscriber.next({ success: code === 0 });
             subscriber.complete();
         });
