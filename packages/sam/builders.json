@@ -1,0 +1,25 @@
+{
+    "$schema": "../../node_modules/@angular-devkit/architect/src/builders-schema.json",
+    "builders": {
+        "build": {
+            "implementation": "./src/builders/build/build",
+            "schema": "./src/builders/build/schema.json",
+            "description": "Build a SAM application"
+        },
+        "execute": {
+            "implementation": "./src/builders/execute/execute",
+            "schema": "./src/builders/execute/schema.json",
+            "description": "Execute a SAM application"
+        },
+        "package": {
+            "implementation": "./src/builders/cloudformation/package/package",
+            "schema": "./src/builders/cloudformation/package/schema.json",
+            "description": "Package a SAM application"
+        },
+        "deploy": {
+            "implementation": "./src/builders/cloudformation/deploy/deploy",
+            "schema": "./src/builders/cloudformation/deploy/schema.json",
+            "description": "Deploy a SAM application"
+        }
+    }
+}

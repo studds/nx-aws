@@ -1,0 +1,137 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Backend for <%= name %>
+
+Globals:
+    Function:
+        Runtime: nodejs12.x
+        Timeout: 5
+        MemorySize: 128
+
+Resources:
+    # We use CloudFront to "unite" the statically hosted website and with the backend, so that they appear to be served
+    # from a single site
+    WebsiteCDN:
+        Type: 'AWS::CloudFront::Distribution'
+        Properties:
+            DistributionConfig:
+                Comment: !Sub '${AWS::StackName}'
+                Enabled: 'true'
+
+                # By default, serve from s3
+                DefaultCacheBehavior:
+                    Compress: true
+                    ForwardedValues:
+                        QueryString: false
+                    TargetOriginId: protected-bucket-public
+                    ViewerProtocolPolicy: redirect-to-https
+
+                # Add a behaviour to /api/* to forward requests to API Gateway
+                CacheBehaviors:
+                    # allow all method for the backend to implement
+                    # NB: only certain combinations are possible here. To allow POST, we must allow all.
+                    - AllowedMethods:
+                          [HEAD, DELETE, POST, GET, OPTIONS, PUT, PATCH]
+                      Compress: true
+                      ForwardedValues:
+                          Headers: #define explicit headers, since API Gateway doesn't work otherwise
+                              - Accept
+                              - Referer
+                              - Authorization
+                              - Content-Type
+                          QueryString: true #to transfer get parameters to the gateway
+                      PathPattern: '/api/*' #path pattern after the Gateway stage identifier.
+                      TargetOriginId: api-origin #id of the orignin
+                      ViewerProtocolPolicy: https-only #API Gateway only support https
+                      MaxTTL: 0
+                      MinTTL: 0
+                      DefaultTTL: 0
+
+                DefaultRootObject: index.html
+
+                Origins:
+                    # S3 - public subdir - we keep this separate for ease of deploying additional ambient state elsewhere in the bucket
+                    - DomainName: !Sub '${WebBucket}.s3-${AWS::Region}.amazonaws.com'
+                      Id: protected-bucket-public
+                      OriginPath: /public
+                      S3OriginConfig:
+                          OriginAccessIdentity: !Sub 'origin-access-identity/cloudfront/${CloudFrontOriginIdentity}'
+
+                    # API Gateway
+                    - DomainName: #define the API Gateway origin
+                          Fn::Join:
+                              - ''
+                              - - Ref: Api
+                                - '.execute-api.'
+                                - Ref: AWS::Region
+                                - '.amazonaws.com'
+                      Id: api-origin
+                      CustomOriginConfig:
+                          OriginProtocolPolicy: https-only #again API-Gateway only supports https
+                      OriginPath: /Prod #name of the deployed stage
+
+                CustomErrorResponses:
+                    - ErrorCode: 404
+                      ResponseCode: 200
+                      ResponsePagePath: /index.html
+
+                HttpVersion: http2
+
+    # CF identity which we can hang the private bucket access permissions on
+    CloudFrontOriginIdentity:
+        Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+        Properties:
+            CloudFrontOriginAccessIdentityConfig:
+                Comment: !Sub 'Cloudfront OAI for ${AWS::StackName}:WebBucket'
+
+    # Policy to allow CF to access the private webbucket
+    WebBucketPolicy:
+        Type: AWS::S3::BucketPolicy
+        Properties:
+            Bucket:
+                Ref: WebBucket
+            PolicyDocument:
+                Version: '2012-10-17'
+                Statement:
+                    - Effect: Allow
+                      Principal:
+                          CanonicalUser: !GetAtt CloudFrontOriginIdentity.S3CanonicalUserId
+                      Action: 's3:GetObject'
+                      Resource: !Sub '${WebBucket.Arn}/*'
+
+    # The WebBucket is where we store our SPA
+    WebBucket:
+        Type: 'AWS::S3::Bucket'
+
+    Api:
+        Type: AWS::Serverless::Api
+        Properties:
+            Name:
+                Ref: AWS::StackName
+            StageName: Prod
+            EndpointConfiguration: REGIONAL
+
+    Hello:
+        # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: app/hello
+            Handler: hello.handler
+            Events:
+                Hello:
+                    Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+                    Properties:
+                        Path: /api/hello
+                        Method: get
+                        RestApiId:
+                            Ref: Api
+
+Outputs:
+    WebBucket:
+        Value: !Ref WebBucket
+
+    DistributionId:
+        Value: !Ref WebsiteCDN
+
+    Url:
+        Value: !Sub 'https://${WebsiteCDN.DomainName}'

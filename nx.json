@@ -1,27 +1,51 @@
 {
-    "npmScope": "nx-aws",
-    "implicitDependencies": {
-        "workspace.json": "*",
-        "package.json": {
-            "dependencies": "*",
-            "devDependencies": "*"
-        },
-        "tsconfig.json": "*",
-        "tslint.json": "*",
-        "nx.json": "*"
+  "npmScope": "nx-aws",
+  "affected": {
+    "defaultBase": "master"
+  },
+  "implicitDependencies": {
+    "workspace.json": "*",
+    "package.json": {
+      "dependencies": "*",
+      "devDependencies": "*"
     },
-    "projects": {
-        "sam": {
-            "tags": []
-        },
-        "core": {
-            "tags": []
-        },
-        "s3": {
-            "tags": []
-        },
-        "cloudformation-sam-types":{
-            "tags": []
-        }
+    "tsconfig.base.json": "*",
+    "tslint.json": "*",
+    "nx.json": "*"
+  },
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "@nrwl/workspace/tasks-runners/default",
+      "options": {
+        "cacheableOperations": ["build", "lint", "test", "e2e"]
+      }
     }
+  },
+  "projects": {
+    "sam": {
+      "tags": []
+    },
+    "sam-e2e": {
+      "tags": [],
+      "implicitDependencies": ["sam"]
+    },
+    "core": {
+      "tags": []
+    },
+    "core-e2e": {
+      "tags": [],
+      "implicitDependencies": ["core"]
+    },
+    "s3": {
+      "tags": []
+    },
+    "s3-e2e": {
+      "tags": [],
+      "implicitDependencies": ["s3"]
+    }
+  },
+  "workspaceLayout": {
+    "appsDir": "e2e",
+    "libsDir": "packages"
+  }
 }

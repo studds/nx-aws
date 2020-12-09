@@ -1,0 +1,31 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "rootDir": ".",
+        "sourceMap": true,
+        "declaration": false,
+        "moduleResolution": "node",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "importHelpers": true,
+        "target": "es2018",
+        "module": "esnext",
+        "typeRoots": ["node_modules/@types"],
+        "lib": ["es2018"],
+        "skipLibCheck": true,
+        "skipDefaultLibCheck": true,
+        "baseUrl": ".",
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "esModuleInterop": true,
+        "paths": {
+            "@nx-aws/sam": ["packages/sam/src/index.ts"],
+            "@nx-aws/core": ["packages/core/src/index.ts"],
+            "@nx-aws/s3": ["packages/s3/src/index.ts"]
+        }
+    },
+    "exclude": ["node_modules", "tmp"]
+}
