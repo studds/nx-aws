@@ -1,0 +1,23 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Domain for <%= name %>
+
+Parameters:
+    DomainName:
+        Type: String
+
+Resources:
+    WebsiteCertificate:
+        Type: AWS::CertificateManager::Certificate
+        Properties:
+            DomainName: !Ref CamBotDomainName
+            ValidationMethod: DNS
+   
+
+Outputs:
+    Certificate:
+        Value: !Ref WebBucket
+
+    DomainName:
+        Value: !Ref WebsiteCDN
+

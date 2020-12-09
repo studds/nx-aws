@@ -2,6 +2,9 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Backend for <%= name %>
 
+// todo: DomainName etc.
+// todo: HostedZoneId
+
 Globals:
     Function:
         Runtime: nodejs12.x
@@ -83,6 +86,19 @@ Resources:
         Properties:
             CloudFrontOriginAccessIdentityConfig:
                 Comment: !Sub 'Cloudfront OAI for ${AWS::StackName}:WebBucket'
+
+    DNSRecord:
+        Type: 'AWS::Route53::RecordSetGroup'
+        Properties:
+            HostedZoneId: !Ref HostedZoneID
+            RecordSets:
+            - Name: !Ref DomainName
+                Type: A
+                AliasTarget:
+                HostedZoneId: Z2FDTNDATAQYW2
+                DNSName: !GetAtt 
+                    - WebsiteCDN
+                    - DomainName
 
     # Policy to allow CF to access the private webbucket
     WebBucketPolicy:
