@@ -1,6 +1,7 @@
 import { Configuration } from 'webpack';
 import { merge } from 'webpack-merge';
 import { ExtendedBuildBuilderOptions } from './build';
+import TerserPlugin from 'terser-webpack-plugin';
 
 /**
  * This entry-point is called by nrwl's builder, just before it calls out to webpack.
@@ -39,7 +40,18 @@ function getCustomWebpack(): Configuration {
         // exclude the aws-sdk
         externals: [/^aws-sdk/],
         optimization: {
-            minimize: false,
+            minimize: true,
+            minimizer: [
+                new TerserPlugin({
+                    terserOptions: {
+                        compress: {
+                            defaults: false,
+                            unused: true,
+                        },
+                        mangle: false,
+                    },
+                }),
+            ],
         },
     };
 }
