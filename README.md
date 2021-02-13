@@ -11,7 +11,7 @@ However, what if your backend uses SAM?
 
 This project includes builders for that!
 
--   @nx-aws/sam:build - builds your functions and layers
+-   @nx-aws/sam:build - builds your functions
 -   @nx-aws/sam:package - packages your SAM (ie. CloudFormation) template ready for deployment
     (including resolving AWS::Serverless::Application references to other apps in your monorepo)
 -   @nx-aws/sam:deploy - deploys your CloudFormation template
@@ -44,8 +44,7 @@ Add the following to your `angular.json`
 ```
 
 The builder will search through your CloudFormation template at `apps/api/template.yaml`
-and find any `AWS::Serverless::Function` and `AWS::Serverless:LayerVersion` and trigger
-appropriate builds.
+and find any `AWS::Serverless::Function` and trigger appropriate builds.
 
 (All the other options are the same as for nrwl's node builder.)
 
@@ -69,36 +68,26 @@ The builder will run a webpack build for `src/my-function/handler-file`.
 
 ### Lambda Layers
 
-If you've got this in your `template.yaml`:
+Lambda layers defined in your template should Just Work - however, the way sam-cli treats layers is broken,
+so they won't: https://github.com/aws/aws-sam-cli/issues/2222.
 
-```yaml
-Resources:
-    MyLayer:
-        Type: 'AWS::Serverless::LayerVersion'
-        Properties:
-            ContentUri: ./src/my-layer
-            CompatibleRuntimes:
-                - nodejs10.x
-                - nodejs8.10
-            LicenseInfo: UNLICENCED
+That said, if you've got a layer defined like this:
+
+```
+  TestLayer:
+    Type: AWS::Serverless::LayerVersion
+    Description: Test layer
+    Properties:
+      ContentUri: ./src/test-layer
+      CompatibleRuntimes:
+        - nodejs10.x
+        - nodejs12.x
+    Metadata:
+      BuildMethod: nodejs12.x
 ```
 
-Lambda layers are deployed as node modules, and so we need to include a `./src/my-layer/package.json`
-
-```json
-{
-    "name": "my-layer",
-    "main": "index.ts"
-}
-```
-
-The builder will:
-
-1. Alter the output directory to include `nodejs/node_modules`, as required for a Lambda layer
-1. Look for a package.json at `./src/my-layer/package.json`
-1. Load `package.json` and get the `main` entry point (`index.ts`)
-1. Run a webpack build for the `main` entry point
-1. Re-write the `main` entry point in `package.json` and write it out to the output directory
+Then during `serve` or `build` nx-aws will simply map the `ContentUri` to an absolute path. Assuming you've got a
+layer at that location that `sam-cli` is happy with, then you're good to go.
 
 ## @nx-aws/sam:package
 
