@@ -1,305 +1,326 @@
 {
-    "version": 1,
-    "projects": {
-        "sam": {
-            "root": "packages/sam",
-            "sourceRoot": "packages/sam/src",
-            "projectType": "library",
-            "schematics": {},
-            "architect": {
-                "lint": {
-                    "builder": "@nrwl/linter:lint",
-                    "options": {
-                        "linter": "eslint",
-                        "tsConfig": [
-                            "packages/sam/tsconfig.lib.json",
-                            "packages/sam/tsconfig.spec.json"
-                        ],
-                        "exclude": ["**/node_modules/**", "!packages/sam/**/*"]
-                    }
-                },
-                "test": {
-                    "builder": "@nrwl/jest:jest",
-                    "options": {
-                        "jestConfig": "packages/sam/jest.config.js",
-                        "tsConfig": "packages/sam/tsconfig.spec.json",
-                        "passWithNoTests": true
-                    }
-                },
-                "build": {
-                    "builder": "@nrwl/node:package",
-                    "options": {
-                        "outputPath": "dist/packages/sam",
-                        "tsConfig": "packages/sam/tsconfig.lib.json",
-                        "packageJson": "packages/sam/package.json",
-                        "main": "packages/sam/src/index.ts",
-                        "assets": [
-                            "packages/sam/*.md",
-                            {
-                                "input": "./packages/sam/src",
-                                "glob": "**/*.!(ts)",
-                                "output": "./src"
-                            },
-                            {
-                                "input": "./packages/sam",
-                                "glob": "collection.json",
-                                "output": "."
-                            },
-                            {
-                                "input": "./packages/sam",
-                                "glob": "builders.json",
-                                "output": "."
-                            }
-                        ]
-                    }
-                },
-                "publish": {
-                    "builder": "@nrwl/workspace:run-commands",
-                    "options": {
-                        "parallel": false,
-                        "commands": [
-                            {
-                                "command": "npx monorepo-package-tool --rootModuleDir packages/sam --destDir dist/packages/sam"
-                            },
-                            {
-                                "command": "npm publish dist/packages/sam --access public --tag $NPM_TAG"
-                            }
-                        ]
-                    }
-                },
-                "pack": {
-                    "builder": "@nrwl/workspace:run-commands",
-                    "options": {
-                        "parallel": false,
-                        "commands": [
-                            {
-                                "command": "npx monorepo-package-tool --rootModuleDir packages/sam --destDir dist/packages/sam"
-                            },
-                            {
-                                "command": "npm pack dist/packages/sam"
-                            }
-                        ]
-                    }
-                }
-            }
+  "version": 1,
+  "projects": {
+    "sam": {
+      "root": "packages/sam",
+      "sourceRoot": "packages/sam/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "packages/sam/**/*.ts",
+              "packages/sam/**/*.spec.ts",
+              "packages/sam/**/*.spec.tsx",
+              "packages/sam/**/*.spec.js",
+              "packages/sam/**/*.spec.jsx",
+              "packages/sam/**/*.d.ts"
+            ]
+          }
         },
-        "sam-e2e": {
-            "projectType": "application",
-            "root": "e2e/sam-e2e",
-            "sourceRoot": "e2e/sam-e2e/src",
-            "architect": {
-                "e2e": {
-                    "builder": "@nrwl/nx-plugin:e2e",
-                    "options": {
-                        "target": "sam:build",
-                        "npmPackageName": "@nx-aws/sam",
-                        "pluginOutputPath": "dist/packages/sam",
-                        "jestConfig": "e2e/sam-e2e/jest.config.js",
-                        "tsSpecConfig": "e2e/sam-e2e/tsconfig.spec.json"
-                    }
-                }
-            }
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "packages/sam/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": [
+            "coverage/packages/sam"
+          ]
         },
-        "core": {
-            "root": "packages/core",
-            "sourceRoot": "packages/core/src",
-            "projectType": "library",
-            "schematics": {},
-            "architect": {
-                "lint": {
-                    "builder": "@nrwl/linter:lint",
-                    "options": {
-                        "linter": "eslint",
-                        "tsConfig": [
-                            "packages/core/tsconfig.lib.json",
-                            "packages/core/tsconfig.spec.json"
-                        ],
-                        "exclude": ["**/node_modules/**", "!packages/core/**/*"]
-                    }
-                },
-                "test": {
-                    "builder": "@nrwl/jest:jest",
-                    "options": {
-                        "jestConfig": "packages/core/jest.config.js",
-                        "tsConfig": "packages/core/tsconfig.spec.json",
-                        "passWithNoTests": true
-                    }
-                },
-                "build": {
-                    "builder": "@nrwl/node:package",
-                    "options": {
-                        "outputPath": "dist/packages/core",
-                        "tsConfig": "packages/core/tsconfig.lib.json",
-                        "packageJson": "packages/core/package.json",
-                        "main": "packages/core/src/index.ts",
-                        "assets": [
-                            "packages/core/*.md",
-                            {
-                                "input": "./packages/core/src",
-                                "glob": "**/*.!(ts)",
-                                "output": "./src"
-                            },
-                            {
-                                "input": "./packages/core",
-                                "glob": "collection.json",
-                                "output": "."
-                            },
-                            {
-                                "input": "./packages/core",
-                                "glob": "builders.json",
-                                "output": "."
-                            }
-                        ]
-                    }
-                },
-                "publish": {
-                    "builder": "@nrwl/workspace:run-commands",
-                    "options": {
-                        "parallel": false,
-                        "commands": [
-                            {
-                                "command": "npx monorepo-package-tool --rootModuleDir packages/core --destDir dist/packages/core"
-                            },
-                            {
-                                "command": "npm publish dist/packages/core --access public --tag $NPM_TAG"
-                            }
-                        ]
-                    }
-                },
-                "pack": {
-                    "builder": "@nrwl/workspace:run-commands",
-                    "options": {
-                        "parallel": false,
-                        "commands": [
-                            {
-                                "command": "npx monorepo-package-tool --rootModuleDir packages/core --destDir dist/packages/core"
-                            },
-                            {
-                                "command": "npm pack dist/packages/core"
-                            }
-                        ]
-                    }
-                }
-            }
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/packages/sam",
+            "tsConfig": "packages/sam/tsconfig.lib.json",
+            "packageJson": "packages/sam/package.json",
+            "main": "packages/sam/src/index.ts",
+            "assets": [
+              "packages/sam/*.md",
+              {
+                "input": "./packages/sam/src",
+                "glob": "**/*.!(ts)",
+                "output": "./src"
+              },
+              {
+                "input": "./packages/sam",
+                "glob": "collection.json",
+                "output": "."
+              },
+              {
+                "input": "./packages/sam",
+                "glob": "builders.json",
+                "output": "."
+              }
+            ],
+            "srcRootForCompilationRoot": "packages/sam"
+          },
+          "outputs": [
+            "{options.outputPath}"
+          ]
         },
-        "core-e2e": {
-            "projectType": "application",
-            "root": "e2e/core-e2e",
-            "sourceRoot": "e2e/core-e2e/src",
-            "architect": {
-                "e2e": {
-                    "builder": "@nrwl/nx-plugin:e2e",
-                    "options": {
-                        "target": "core:build",
-                        "npmPackageName": "@nx-aws/core",
-                        "pluginOutputPath": "dist/packages/core",
-                        "jestConfig": "e2e/core-e2e/jest.config.js",
-                        "tsSpecConfig": "e2e/core-e2e/tsconfig.spec.json"
-                    }
-                }
-            }
+        "publish": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "npx monorepo-package-tool --rootModuleDir packages/sam --destDir dist/packages/sam"
+              },
+              {
+                "command": "npm publish dist/packages/sam --access public --tag $NPM_TAG"
+              }
+            ]
+          }
         },
-        "s3": {
-            "root": "packages/s3",
-            "sourceRoot": "packages/s3/src",
-            "projectType": "library",
-            "schematics": {},
-            "architect": {
-                "lint": {
-                    "builder": "@nrwl/linter:lint",
-                    "options": {
-                        "linter": "eslint",
-                        "tsConfig": [
-                            "packages/s3/tsconfig.lib.json",
-                            "packages/s3/tsconfig.spec.json"
-                        ],
-                        "exclude": ["**/node_modules/**", "!packages/s3/**/*"]
-                    }
-                },
-                "test": {
-                    "builder": "@nrwl/jest:jest",
-                    "options": {
-                        "jestConfig": "packages/s3/jest.config.js",
-                        "tsConfig": "packages/s3/tsconfig.spec.json",
-                        "passWithNoTests": true
-                    }
-                },
-                "build": {
-                    "builder": "@nrwl/node:package",
-                    "options": {
-                        "outputPath": "dist/packages/s3",
-                        "tsConfig": "packages/s3/tsconfig.lib.json",
-                        "packageJson": "packages/s3/package.json",
-                        "main": "packages/s3/src/index.ts",
-                        "assets": [
-                            "packages/s3/*.md",
-                            {
-                                "input": "./packages/s3/src",
-                                "glob": "**/*.!(ts)",
-                                "output": "./src"
-                            },
-                            {
-                                "input": "./packages/s3",
-                                "glob": "collection.json",
-                                "output": "."
-                            },
-                            {
-                                "input": "./packages/s3",
-                                "glob": "builders.json",
-                                "output": "."
-                            }
-                        ]
-                    }
-                },
-                "publish": {
-                    "builder": "@nrwl/workspace:run-commands",
-                    "options": {
-                        "parallel": false,
-                        "commands": [
-                            {
-                                "command": "npx monorepo-package-tool --rootModuleDir packages/s3 --destDir dist/packages/s3"
-                            },
-                            {
-                                "command": "npm publish dist/packages/s3 --access public --tag $NPM_TAG"
-                            }
-                        ]
-                    }
-                },
-                "pack": {
-                    "builder": "@nrwl/workspace:run-commands",
-                    "options": {
-                        "parallel": false,
-                        "commands": [
-                            {
-                                "command": "npx monorepo-package-tool --rootModuleDir packages/s3 --destDir dist/packages/s3"
-                            },
-                            {
-                                "command": "npm pack dist/packages/s3"
-                            }
-                        ]
-                    }
-                }
-            }
-        },
-        "s3-e2e": {
-            "projectType": "application",
-            "root": "e2e/s3-e2e",
-            "sourceRoot": "e2e/s3-e2e/src",
-            "architect": {
-                "e2e": {
-                    "builder": "@nrwl/nx-plugin:e2e",
-                    "options": {
-                        "target": "s3:build",
-                        "npmPackageName": "@nx-aws/s3",
-                        "pluginOutputPath": "dist/packages/s3",
-                        "jestConfig": "e2e/s3-e2e/jest.config.js",
-                        "tsSpecConfig": "e2e/s3-e2e/tsconfig.spec.json"
-                    }
-                }
-            }
+        "pack": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "npx monorepo-package-tool --rootModuleDir packages/sam --destDir dist/packages/sam"
+              },
+              {
+                "command": "npm pack dist/packages/sam"
+              }
+            ]
+          }
         }
+      }
     },
-    "cli": {
-        "defaultCollection": "@nrwl/workspace"
+    "sam-e2e": {
+      "projectType": "application",
+      "root": "e2e/sam-e2e",
+      "sourceRoot": "e2e/sam-e2e/src",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/nx-plugin:e2e",
+          "options": {
+            "target": "sam:build",
+            "npmPackageName": "@nx-aws/sam",
+            "pluginOutputPath": "dist/packages/sam",
+            "jestConfig": "e2e/sam-e2e/jest.config.js"
+          }
+        }
+      }
+    },
+    "core": {
+      "root": "packages/core",
+      "sourceRoot": "packages/core/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "packages/core/**/*.ts",
+              "packages/core/**/*.spec.ts",
+              "packages/core/**/*.spec.tsx",
+              "packages/core/**/*.spec.js",
+              "packages/core/**/*.spec.jsx",
+              "packages/core/**/*.d.ts"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "packages/core/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": [
+            "coverage/packages/core"
+          ]
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/packages/core",
+            "tsConfig": "packages/core/tsconfig.lib.json",
+            "packageJson": "packages/core/package.json",
+            "main": "packages/core/src/index.ts",
+            "assets": [
+              "packages/core/*.md",
+              {
+                "input": "./packages/core/src",
+                "glob": "**/*.!(ts)",
+                "output": "./src"
+              },
+              {
+                "input": "./packages/core",
+                "glob": "collection.json",
+                "output": "."
+              },
+              {
+                "input": "./packages/core",
+                "glob": "builders.json",
+                "output": "."
+              }
+            ],
+            "srcRootForCompilationRoot": "packages/core"
+          },
+          "outputs": [
+            "{options.outputPath}"
+          ]
+        },
+        "publish": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "npx monorepo-package-tool --rootModuleDir packages/core --destDir dist/packages/core"
+              },
+              {
+                "command": "npm publish dist/packages/core --access public --tag $NPM_TAG"
+              }
+            ]
+          }
+        },
+        "pack": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "npx monorepo-package-tool --rootModuleDir packages/core --destDir dist/packages/core"
+              },
+              {
+                "command": "npm pack dist/packages/core"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "core-e2e": {
+      "projectType": "application",
+      "root": "e2e/core-e2e",
+      "sourceRoot": "e2e/core-e2e/src",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/nx-plugin:e2e",
+          "options": {
+            "target": "core:build",
+            "npmPackageName": "@nx-aws/core",
+            "pluginOutputPath": "dist/packages/core",
+            "jestConfig": "e2e/core-e2e/jest.config.js"
+          }
+        }
+      }
+    },
+    "s3": {
+      "root": "packages/s3",
+      "sourceRoot": "packages/s3/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "packages/s3/**/*.ts",
+              "packages/s3/**/*.spec.ts",
+              "packages/s3/**/*.spec.tsx",
+              "packages/s3/**/*.spec.js",
+              "packages/s3/**/*.spec.jsx",
+              "packages/s3/**/*.d.ts"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "packages/s3/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": [
+            "coverage/packages/s3"
+          ]
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/packages/s3",
+            "tsConfig": "packages/s3/tsconfig.lib.json",
+            "packageJson": "packages/s3/package.json",
+            "main": "packages/s3/src/index.ts",
+            "assets": [
+              "packages/s3/*.md",
+              {
+                "input": "./packages/s3/src",
+                "glob": "**/*.!(ts)",
+                "output": "./src"
+              },
+              {
+                "input": "./packages/s3",
+                "glob": "collection.json",
+                "output": "."
+              },
+              {
+                "input": "./packages/s3",
+                "glob": "builders.json",
+                "output": "."
+              }
+            ],
+            "srcRootForCompilationRoot": "packages/s3"
+          },
+          "outputs": [
+            "{options.outputPath}"
+          ]
+        },
+        "publish": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "npx monorepo-package-tool --rootModuleDir packages/s3 --destDir dist/packages/s3"
+              },
+              {
+                "command": "npm publish dist/packages/s3 --access public --tag $NPM_TAG"
+              }
+            ]
+          }
+        },
+        "pack": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "npx monorepo-package-tool --rootModuleDir packages/s3 --destDir dist/packages/s3"
+              },
+              {
+                "command": "npm pack dist/packages/s3"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "s3-e2e": {
+      "projectType": "application",
+      "root": "e2e/s3-e2e",
+      "sourceRoot": "e2e/s3-e2e/src",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/nx-plugin:e2e",
+          "options": {
+            "target": "s3:build",
+            "npmPackageName": "@nx-aws/s3",
+            "pluginOutputPath": "dist/packages/s3",
+            "jestConfig": "e2e/s3-e2e/jest.config.js"
+          }
+        }
+      }
     }
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/workspace"
+  }
 }
