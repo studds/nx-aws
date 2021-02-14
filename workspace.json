@@ -318,6 +318,17 @@
           }
         }
       }
+    },
+    "workspace": {
+      "architect": {
+        "version": {
+          "builder": "@jscutlery/semver:version",
+          "options": {
+            "syncVersions": true
+          }
+        }
+      },
+      "root": "."
     }
   },
   "cli": {

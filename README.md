@@ -16,6 +16,12 @@ This project includes builders for that!
     (including resolving AWS::Serverless::Application references to other apps in your monorepo)
 -   @nx-aws/sam:deploy - deploys your CloudFormation template
 
+## Get started
+
+1. Open your existing workspace or run `npx create-nx-workspace` to create a new workspace
+1. `npm install @nx-aws/sam` or `yarn add @nx-aws/sam`
+1. `nx g @nx-aws/sam:app api [--frontendProject sample]`
+
 ## @nx-aws/sam:build
 
 Add the following to your `angular.json`
@@ -69,36 +75,7 @@ The builder will run a webpack build for `src/my-function/handler-file`.
 
 ### Lambda Layers
 
-If you've got this in your `template.yaml`:
-
-```yaml
-Resources:
-    MyLayer:
-        Type: 'AWS::Serverless::LayerVersion'
-        Properties:
-            ContentUri: ./src/my-layer
-            CompatibleRuntimes:
-                - nodejs10.x
-                - nodejs8.10
-            LicenseInfo: UNLICENCED
-```
-
-Lambda layers are deployed as node modules, and so we need to include a `./src/my-layer/package.json`
-
-```json
-{
-    "name": "my-layer",
-    "main": "index.ts"
-}
-```
-
-The builder will:
-
-1. Alter the output directory to include `nodejs/node_modules`, as required for a Lambda layer
-1. Look for a package.json at `./src/my-layer/package.json`
-1. Load `package.json` and get the `main` entry point (`index.ts`)
-1. Run a webpack build for the `main` entry point
-1. Re-write the `main` entry point in `package.json` and write it out to the output directory
+Lambda layers are not currently working, see issue #55
 
 ## @nx-aws/sam:package
 
