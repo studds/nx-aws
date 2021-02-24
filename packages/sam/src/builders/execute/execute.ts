@@ -21,6 +21,7 @@ import { loadEnvFromStack } from '../../utils/loadEnvFromStack';
 import { updateCloudFormationTemplate } from '../cloudformation/package/updateCloudFormationTemplate';
 import { loadCloudFormationTemplate } from '../../utils/load-cloud-formation-template';
 import { dumpCloudformationTemplate } from '../../utils/dumpCloudformationTemplate';
+import { getParameterOverrides } from '../../utils/getParameterOverrides';
 
 try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -74,14 +75,30 @@ function startBuild(
                     );
                 }
                 return copyTemplate(options, context, template).pipe(
-                    switchMap((finalTemplateLocation) => {
-                        return startBuildImpl(
-                            options,
-                            context,
-                            finalTemplateLocation,
-                            target
-                        );
-                    })
+                    switchMap((finalTemplateLocation) =>
+                        from(
+                            getParameterOverrides(
+                                { ...options, templateFile: template },
+                                context,
+                                undefined
+                            )
+                        ).pipe(
+                            map((parameterOverrides) => ({
+                                finalTemplateLocation,
+                                parameterOverrides,
+                            }))
+                        )
+                    ),
+                    switchMap(
+                        ({ finalTemplateLocation, parameterOverrides }) => {
+                            return startBuildImpl(
+                                { ...options, parameterOverrides },
+                                context,
+                                finalTemplateLocation,
+                                target
+                            );
+                        }
+                    )
                 );
             }
         )

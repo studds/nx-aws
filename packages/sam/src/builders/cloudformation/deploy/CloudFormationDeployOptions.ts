@@ -1,4 +1,5 @@
-import { IParameterOverrides, Capability } from './deploy';
+import { Capability } from './deploy';
+import { IParameterOverrides } from './IParameterOverrides';
 export interface CloudFormationDeployOptions {
     parameterOverrides: IParameterOverrides;
     noFailOnEmptyChangeset: true;
