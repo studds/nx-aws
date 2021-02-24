@@ -179,3 +179,16 @@ Parameters:
 
 The the deploy builder will look for an environment variable MY_PARAMETER and pass it in as
 a parameter overrides.
+
+## contributing
+
+PRs and contributions are very very welcome!
+
+### Building & testing locally
+
+To build, run `yarn build`.
+
+`yarn link` doesn't work to test locally, due to the way npm resolves dependencies. The best
+workflow I've found is to copy across the files as the change. There's a script to do
+this: `yarn pack:copy --projectPath ../test-nx-aws/` - just change `../test-nx-aws` to your
+local test project.
