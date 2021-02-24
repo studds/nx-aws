@@ -18,6 +18,9 @@
         "start": "nx serve",
         "build": "nx run-many --target=build --all",
         "pack": "nx run-many --target=pack --all",
+        "pack:copy": "yarn ts-node ./scripts/cpx.ts",
+        "semver:dryrun": "yarn semver --dry-run",
+        "semver": "nx run workspace:semver",
         "publish:latest": "NPM_TAG=latest nx run-many --target=publish --all",
         "publish:next": "NPM_TAG=next nx run-many --target=publish --all",
         "test": "nx run-many --target=test --all",
@@ -37,8 +40,7 @@
         "update": "nx migrate latest",
         "dep-graph": "nx dep-graph",
         "help": "nx help",
-        "workspace-generator": "nx workspace-generator",
-        "pack:copy": "yarn ts-node ./scripts/cpx.ts"
+        "workspace-generator": "nx workspace-generator"
     },
     "author": "studds@fastmail.com",
     "license": "MIT",
