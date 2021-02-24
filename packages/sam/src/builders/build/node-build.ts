@@ -40,8 +40,8 @@ export function nodeBuilder(
     context: BuilderContext
 ): Observable<NodeBuildEvent> {
     return from(getSourceRoot(context)).pipe(
-        map(sourceRoot =>
-            normalizeBuildOptions(options, context.workspaceRoot, sourceRoot!)
+        map(({sourceRoot, projectRoot}) =>
+            normalizeBuildOptions(options, context.workspaceRoot, sourceRoot, projectRoot)
         ),
         map(options => {
             let config = getNodeWebpackConfig(options);
@@ -78,13 +78,16 @@ async function getSourceRoot(context: BuilderContext) {
         context.workspaceRoot,
         workspaceHost
     );
-    if (workspace.projects.get(context.target!.project)!.sourceRoot) {
-        return workspace.projects.get(context.target!.project)!.sourceRoot;
+    const project = workspace.projects.get(context.target!.project);
+    const sourceRoot = project?.sourceRoot;
+    const projectRoot = project?.root;
+    if (sourceRoot && projectRoot) {
+        return {sourceRoot, projectRoot};
     } else {
         context.reportStatus('Error');
         const message = `${
             context.target!.project
-        } does not have a sourceRoot. Please define one.`;
+        } does not have a sourceRoot or project root. Please define one.`;
         context.logger.error(message);
         throw new Error(message);
     }
