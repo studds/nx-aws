@@ -12,5 +12,8 @@
         "Monorepo"
     ],
     "schematics": "./collection.json",
-    "builders": "./builders.json"
+    "builders": "./builders.json",
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org/"
+    }
 }
