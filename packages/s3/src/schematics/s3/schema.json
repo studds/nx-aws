@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema",
+  "$schema": "http://json-schema.org/schema",
   "id": "S3",
   "title": "",
   "type": "object",
@@ -24,5 +24,7 @@
       "alias": "d"
     }
   },
-  "required": ["name"]
+  "required": [
+    "name"
+  ]
 }

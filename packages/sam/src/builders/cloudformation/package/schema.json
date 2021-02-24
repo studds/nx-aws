@@ -1,38 +1,42 @@
 {
-    "title": "SAM Application Package Target",
-    "description": "Packages the SAM Application using the AWS CLI",
-    "type": "object",
-    "properties": {
-        "templateFile": {
-            "description": "The path where your AWS CloudFormation template is located.",
-            "type": "string",
-            "title": "templateFile"
-        },
-        "outputTemplateFile": {
-            "type": "string",
-            "title": "outputTemplateFile"
-        },
-        "s3Bucket": {
-            "description": "The name of the S3 bucket where this command uploads the artefacts that are referenced in your template.",
-            "type": "string",
-            "title": "s3Bucket"
-        },
-        "s3Prefix": {
-            "description": "A prefix name that the command adds to the artefacts' name when it uploads them to the S3 bucket. The\nprefix name is a path name (folder name) for the S3 bucket.",
-            "type": "string",
-            "title": "s3Prefix"
-        },
-        "subStackOnly": {
-            "description": "If true, we skip the aws package command, which is unnecessary for a sub stack",
-            "type": "boolean",
-            "title": "subStackOnly"
-        },
-        "region": {
-            "description": "The region to upload resources",
-            "type": "string",
-            "title": "region"
-        }
+  "title": "SAM Application Package Target",
+  "description": "Packages the SAM Application using the AWS CLI",
+  "type": "object",
+  "properties": {
+    "templateFile": {
+      "description": "The path where your AWS CloudFormation template is located.",
+      "type": "string",
+      "title": "templateFile"
     },
-    "required": ["outputTemplateFile", "s3Bucket", "templateFile"],
-    "definitions": {}
+    "outputTemplateFile": {
+      "type": "string",
+      "title": "outputTemplateFile"
+    },
+    "s3Bucket": {
+      "description": "The name of the S3 bucket where this command uploads the artefacts that are referenced in your template.",
+      "type": "string",
+      "title": "s3Bucket"
+    },
+    "s3Prefix": {
+      "description": "A prefix name that the command adds to the artefacts' name when it uploads them to the S3 bucket. The\nprefix name is a path name (folder name) for the S3 bucket.",
+      "type": "string",
+      "title": "s3Prefix"
+    },
+    "subStackOnly": {
+      "description": "If true, we skip the aws package command, which is unnecessary for a sub stack",
+      "type": "boolean",
+      "title": "subStackOnly"
+    },
+    "region": {
+      "description": "The region to upload resources",
+      "type": "string",
+      "title": "region"
+    }
+  },
+  "required": [
+    "outputTemplateFile",
+    "s3Bucket",
+    "templateFile"
+  ],
+  "definitions": {}
 }

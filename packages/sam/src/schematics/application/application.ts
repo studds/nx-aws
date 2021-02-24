@@ -18,6 +18,8 @@ import {
     appsDir,
     updateWorkspaceInTree,
 } from '@nrwl/workspace/src/utils/ast-utils';
+// there's an implicit dependency on @nrwl/node
+import '@nrwl/node';
 
 interface NormalizedSchema extends Schema {
     appProjectRoot: Path;
