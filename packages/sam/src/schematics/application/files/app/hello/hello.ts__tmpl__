@@ -1,6 +1,11 @@
-export const handler = async () => {
-    return {
-        statusCode: 200,
-        body: JSON.stringify({ message: 'Welcome to <%= name %>!' }),
-    };
-};
+import { lambda } from '@nx-aws/sam';
+
+export const handler = lambda({
+    environmentVariables: [],
+    handler: async () => {
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ message: 'Welcome to <%= name %>!' }),
+        };
+    },
+});
