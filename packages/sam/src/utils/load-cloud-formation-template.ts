@@ -42,5 +42,5 @@ export function loadCloudFormationTemplate(
 export function parseCloudFormationTemplate(yaml: string): ParsedSamTemplate {
     return load(yaml, {
         schema: CLOUDFORMATION_SCHEMA,
-    });
+    }) as ParsedSamTemplate;
 }

@@ -18,6 +18,8 @@ This project includes builders for that!
 
 ## Get started
 
+**NB: nx-aws 0.10.0 and higher require @nrwl/nx v11 and @angular-devkit/core v11.**
+
 1. Open your existing workspace or run `npx create-nx-workspace` to create a new workspace
 1. `npm install @nx-aws/sam` or `yarn add @nx-aws/sam`
 1. `nx g @nx-aws/sam:app api [--frontendProject sample]`
