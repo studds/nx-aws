@@ -2,6 +2,16 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [0.11.0](https://github.com/studds/nx-aws/compare/v0.10.0...v0.11.0) (2021-03-01)
+
+
+### Features
+
+* **sam/build:** install npm modules if generatePackageJson is on ([a93e230](https://github.com/studds/nx-aws/commit/a93e23066e7c1fae58ad840565cf727b58ee8647))
+* copy & paste the latest @nrwl/node:build ([773e5ce](https://github.com/studds/nx-aws/commit/773e5ce1085c25d64b6fb62b8ad2a40dc40a59a9))
+
+
+
 # [0.10.0](https://github.com/studds/nx-aws/compare/v0.9.1...v0.10.0) (2021-02-24)
 
 
