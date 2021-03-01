@@ -64,7 +64,7 @@ function startBuild(
     options: SamExecuteBuilderOptions,
     context: BuilderContext
 ): Observable<BuilderOutput> {
-    const target = targetFromTargetString(options.buildTarget);
+    const buildTarget = targetFromTargetString(options.buildTarget);
     return getBuilderOptions(options, context).pipe(
         concatMap(
             (builderOptions): Observable<BuilderOutput> => {
@@ -95,7 +95,7 @@ function startBuild(
                                 { ...options, parameterOverrides },
                                 context,
                                 finalTemplateLocation,
-                                target
+                                buildTarget
                             );
                         }
                     )
@@ -109,11 +109,11 @@ function startBuildImpl(
     options: SamExecuteBuilderOptions,
     context: BuilderContext,
     template: string,
-    target: Target
+    buildTarget: Target
 ) {
     const sam$ = runSam(options, context, template);
     // todo: it would be nice to wait until the first successful completion of build$ before triggering sam$
-    const build$ = scheduleTargetAndForget(context, target, {
+    const build$ = scheduleTargetAndForget(context, buildTarget, {
         watch: true,
     });
     return combineLatest([sam$, build$]).pipe(

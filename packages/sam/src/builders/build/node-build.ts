@@ -3,6 +3,7 @@
  * modifications:
  * - casts so that it builds under strict
  * - export run function as 'nodeBuilder'
+ * - run npm install if generatePackageJson is true
  * TODO: use scheduleBuilder once @nrwl/node is updated to support that
  */
 
@@ -25,6 +26,7 @@ import { generatePackageJson } from '@nrwl/node/src/utils/generate-package-json'
 import { normalizeBuildOptions } from '@nrwl/node/src/utils/normalize';
 import { getNodeWebpackConfig } from '@nrwl/node/src/utils/node.config';
 import { OUT_FILENAME } from '@nrwl/node/src/utils/config';
+import { installNpmModules } from './installNpmModules';
 
 try {
     require('dotenv').config();
@@ -74,6 +76,7 @@ export function nodeBuilder(
                     projGraph,
                     normalizedOptions
                 );
+                installNpmModules(normalizedOptions);
             }
         }),
         map((options) => {
