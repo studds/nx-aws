@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.11.1](https://github.com/studds/nx-aws/compare/v0.11.0...v0.11.1) (2021-03-03)
+
+
+### Bug Fixes
+
+* **sam:** correct required properties in build schema ([8aa684a](https://github.com/studds/nx-aws/commit/8aa684a5e154d5eb5198bfa79f8c90e165845e52))
+
+
+
 # [0.11.0](https://github.com/studds/nx-aws/compare/v0.10.0...v0.11.0) (2021-03-01)
 
 
