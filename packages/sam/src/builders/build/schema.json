@@ -124,7 +124,7 @@
             "default": false
         }
     },
-    "required": ["tsConfig", "main"],
+    "required": ["tsConfig", "template"],
 
     "definitions": {
         "assetPattern": {
