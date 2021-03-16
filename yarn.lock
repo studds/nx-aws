@@ -1477,7 +1477,7 @@
     minimatch "3.0.4"
     tslib "^2.0.0"
 
-"@nrwl/node@11.3.1":
+"@nrwl/node@11.3.1", "@nrwl/node@^11":
   version "11.3.1"
   resolved "https://registry.yarnpkg.com/@nrwl/node/-/node-11.3.1.tgz#ac7d7857648b849aa77353ccfd2aa640c2ab98f6"
   integrity sha512-gZlNXBue0XQspBOChIwcqLAfhVEEAQ/z1Yd29ClQNOq0C/+u7srRHgHeThfk5+jfR0v1uHuPlFoynFUVF3GBxg==
@@ -1506,7 +1506,7 @@
     webpack-merge "4.2.1"
     webpack-node-externals "1.7.2"
 
-"@nrwl/nx-plugin@11.3.1":
+"@nrwl/nx-plugin@^11":
   version "11.3.1"
   resolved "https://registry.yarnpkg.com/@nrwl/nx-plugin/-/nx-plugin-11.3.1.tgz#54ffacb2f2d4e62dbc1f7bbcff203473c5baff99"
   integrity sha512-v70tteg57yMgRPeleoKX7Y4jKO1iEbvi+Xowbqsa8DMQxux4ubz6kZv0NmtUvjZIJ3QfI3Ne4pyNn3rkFU55iw==
@@ -1541,7 +1541,7 @@
     tslib "^2.0.0"
     yargs-parser "20.0.0"
 
-"@nrwl/workspace@11.3.1":
+"@nrwl/workspace@^11":
   version "11.3.1"
   resolved "https://registry.yarnpkg.com/@nrwl/workspace/-/workspace-11.3.1.tgz#e97f919ee32bf590f614a42020e1109568d61bab"
   integrity sha512-MZKcOFvyPdP3j4d0ygwV0a2au9pek4Wh6JOhrB5QzHxMhtWKRjkbnd9BR1c8jT9eHQYht4syOJ+L6zUZ21gxPg==

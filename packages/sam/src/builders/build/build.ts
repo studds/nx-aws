@@ -10,6 +10,7 @@ import { concatMap, map, toArray } from 'rxjs/operators';
 import { Target } from '@angular-devkit/architect/src/output-schema';
 import { Entry } from 'webpack';
 import { NodeBuildEvent } from '@nrwl/node/src/builders/build/build.impl';
+import { loadCloudFormationTemplate } from '../../utils/load-cloud-formation-template';
 
 export interface ExtendedBuildBuilderOptions extends BuildNodeBuilderOptions {
     originalWebpackConfig?: string;
@@ -22,7 +23,7 @@ export default createBuilder<ExtendedBuildBuilderOptions & JsonObject>(run);
  * Custom build function for CloudFormation templates.
  *
  * Actual build is handled by nrwl's node builder. This just inspects a CloudFormation template
- * and finds things to build. Right now, it handles AWS::Serverless::Function and AWS::Serverless::LayerVersion
+ * and finds things to build. Right now, it handles AWS::Serverless::Function
  *
  */
 export function run(
@@ -31,11 +32,12 @@ export function run(
 ): Observable<BuildResult> {
     normaliseOptions(options, context);
 
-    // we inspect the CloudFormation template and return webpack entries for the functions / layers
+    // we inspect the CloudFormation template and return webpack entries for the functions
     // we want to build.
     // NB: there's one entry per function. This gives us more flexibility when it comes to
     // optimising the package for each function.
-    let entries = getEntriesFromCloudFormation(options, context);
+    const cf = loadCloudFormationTemplate(options.template);
+    let entries = getEntriesFromCloudFormation(options, cf);
 
     if (entries.length === 0) {
         context.logger.info(
@@ -47,8 +49,8 @@ export function run(
     if (options.watch) {
         // in watch mode, we only want a single build for everything.
         const combinedEntry: Entry = {};
-        entries.forEach(entry => {
-            Object.keys(entry).forEach(key => {
+        entries.forEach((entry) => {
+            Object.keys(entry).forEach((key) => {
                 combinedEntry[key] = entry[key];
             });
         });
@@ -93,7 +95,7 @@ export function run(
                 // only successful if we've got the same number of results as we have entries.
                 let success = results.length === entries.length;
                 let target: Target | undefined;
-                results.forEach(result => {
+                results.forEach((result) => {
                     Object.assign(info, result.info);
                     target = result.target;
                     emittedFiles.push(...(result.emittedFiles || []));
@@ -105,7 +107,7 @@ export function run(
                     emittedFiles,
                     info,
                     success,
-                    target
+                    target,
                 } as unknown) as BuildResult;
             }
         )

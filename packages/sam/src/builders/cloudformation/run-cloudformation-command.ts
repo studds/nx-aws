@@ -7,17 +7,23 @@ import { CloudFormationDeployOptions } from './deploy/CloudFormationDeployOption
 export function runCloudformationCommand(
     options: JsonObject | CloudFormationDeployOptions,
     context: BuilderContext,
-    subcommand: string
+    subcommand: string | string[]
 ) {
     return new Promise<BuilderOutput>((resolve) => {
-        const args: string[] = [subcommand];
+        const args: string[] = Array.isArray(subcommand)
+            ? subcommand
+            : [subcommand];
         Object.keys(options).forEach((arg) => {
             const value = (options as any)[arg];
             if (value) {
                 if (Array.isArray(value)) {
-                    args.push(`--${dasherize(arg)}`);
-                    // todo: avoid this cast to Array<string>
-                    args.push(...(value as Array<string>));
+                    if (arg === 'args') {
+                        args.push(...value);
+                    } else {
+                        args.push(`--${dasherize(arg)}`);
+                        // todo: avoid this cast to Array<string>
+                        args.push(...(value as Array<string>));
+                    }
                 } else if (typeof value === 'object') {
                     const keys = Object.keys(value);
                     if (keys.length > 0) {
@@ -42,7 +48,7 @@ export function runCloudformationCommand(
             'info',
             `Executing "${command} ${args.join(' ')}"...`
         );
-        context.reportStatus(`Executing "${command} ${args[0]} ${args[1]}"...`);
+        context.reportStatus(`Executing "${command} ${args.join(' ')}"...`);
         const child = spawn(command, args, {
             stdio: 'inherit',
             env: process.env,

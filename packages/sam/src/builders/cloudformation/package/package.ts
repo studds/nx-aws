@@ -1,19 +1,16 @@
 import { createBuilder, BuilderContext } from '@angular-devkit/architect';
 import { JsonObject } from '@angular-devkit/core';
 import { runCloudformationCommand } from '../run-cloudformation-command';
-import Template from 'cloudform-types/types/template';
 import { from } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { writeFileSync } from 'fs';
-import Resource from 'cloudform-types/types/resource';
 import { getFinalTemplateLocation } from '../get-final-template-location';
-import { parse } from 'path';
-import { mapRelativePathsToAbsolute } from './mapRelativePathsToAbsolute';
 import { loadCloudFormationTemplate } from '../../../utils/load-cloud-formation-template';
 import { dumpCloudformationTemplate } from '../../../utils/dumpCloudformationTemplate';
+import { updateCloudFormationTemplate } from './updateCloudFormationTemplate';
 
 // todo: allow overriding some / all of these with environment variables
-interface IPackageOptions extends JsonObject {
+export interface IPackageOptions extends JsonObject {
     /**
      * The path where your AWS CloudFormation template is located.
      */
@@ -43,8 +40,11 @@ interface IPackageOptions extends JsonObject {
 }
 
 try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     require('dotenv').config();
-} catch (e) {}
+} catch (e) {
+    // ignore any error
+}
 
 export default createBuilder<IPackageOptions>(
     (options: IPackageOptions, context: BuilderContext) => {
@@ -77,71 +77,3 @@ export default createBuilder<IPackageOptions>(
         );
     }
 );
-async function updateCloudFormationTemplate(
-    cloudFormation: Template,
-    context: BuilderContext,
-    options: IPackageOptions
-) {
-    await resolveSubStacks(cloudFormation, context);
-    const inputPath = parse(options.templateFile).dir;
-    mapRelativePathsToAbsolute(cloudFormation, inputPath);
-}
-async function resolveSubStacks(
-    cloudFormation: Template,
-    context: BuilderContext
-) {
-    const resources = cloudFormation.Resources;
-    if (resources) {
-        for (const key in resources) {
-            if (resources.hasOwnProperty(key)) {
-                const resource = resources[key];
-                if (resource.Type === 'AWS::Serverless::Application') {
-                    await resolveSubStackTemplateLocation(
-                        resource,
-                        context,
-                        key
-                    );
-                }
-            }
-        }
-    }
-}
-
-async function resolveSubStackTemplateLocation(
-    resource: Resource,
-    context: BuilderContext,
-    key: string
-) {
-    const properties = resource.Properties;
-    if (properties) {
-        const location = properties.Location;
-        try {
-            const applicationOptions = await context.getTargetOptions({
-                project: location,
-                target: 'package',
-            });
-            const outputTemplateFile = applicationOptions.outputTemplateFile;
-            const templateFile = applicationOptions.templateFile;
-            if (
-                isContentfulString(outputTemplateFile) &&
-                isContentfulString(templateFile)
-            ) {
-                // we map the location to the
-                const finalTemplateLocation = getFinalTemplateLocation(
-                    outputTemplateFile,
-                    templateFile
-                );
-                context.logger.info(
-                    `Remapping ${key} location to ${finalTemplateLocation} for referenced project ${location}`
-                );
-                properties.Location = finalTemplateLocation;
-            }
-        } catch (err) {
-            // ignore error - it's not a project reference
-        }
-    }
-}
-
-function isContentfulString(s: any): s is string {
-    return typeof s === 'string' && !!s;
-}

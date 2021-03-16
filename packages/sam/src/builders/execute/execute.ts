@@ -7,7 +7,7 @@ import {
     Target,
 } from '@angular-devkit/architect';
 
-import { Observable, of, combineLatest } from 'rxjs';
+import { Observable, of, combineLatest, from } from 'rxjs';
 import { concatMap, map, tap, switchMap } from 'rxjs/operators';
 
 import { stripIndents } from '@angular-devkit/core/src/utils/literals';
@@ -15,13 +15,20 @@ import { SamExecuteBuilderOptions } from './options';
 import { runSam } from './run-sam';
 import { JsonObject } from '@angular-devkit/core';
 import { getFinalTemplateLocation } from '../cloudformation/get-final-template-location';
-import { copyFileSync, watch } from 'fs';
+import { watch, writeFileSync } from 'fs';
 import { getValidatedOptions } from '@nx-aws/core';
 import { loadEnvFromStack } from '../../utils/loadEnvFromStack';
+import { updateCloudFormationTemplate } from '../cloudformation/package/updateCloudFormationTemplate';
+import { loadCloudFormationTemplate } from '../../utils/load-cloud-formation-template';
+import { dumpCloudformationTemplate } from '../../utils/dumpCloudformationTemplate';
+import { getParameterOverrides } from '../../utils/getParameterOverrides';
 
 try {
-    require('dotenv').config();
-} catch (e) {}
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    require('dotenv').config({ silent: true });
+} catch (e) {
+    // ignore error
+}
 
 export const enum InspectType {
     Inspect = 'inspect',
@@ -57,7 +64,7 @@ function startBuild(
     options: SamExecuteBuilderOptions,
     context: BuilderContext
 ): Observable<BuilderOutput> {
-    const target = targetFromTargetString(options.buildTarget);
+    const buildTarget = targetFromTargetString(options.buildTarget);
     return getBuilderOptions(options, context).pipe(
         concatMap(
             (builderOptions): Observable<BuilderOutput> => {
@@ -68,14 +75,30 @@ function startBuild(
                     );
                 }
                 return copyTemplate(options, context, template).pipe(
-                    switchMap((finalTemplateLocation) => {
-                        return startBuildImpl(
-                            options,
-                            context,
-                            finalTemplateLocation,
-                            target
-                        );
-                    })
+                    switchMap((finalTemplateLocation) =>
+                        from(
+                            getParameterOverrides(
+                                { ...options, templateFile: template },
+                                context,
+                                undefined
+                            )
+                        ).pipe(
+                            map((parameterOverrides) => ({
+                                finalTemplateLocation,
+                                parameterOverrides,
+                            }))
+                        )
+                    ),
+                    switchMap(
+                        ({ finalTemplateLocation, parameterOverrides }) => {
+                            return startBuildImpl(
+                                { ...options, parameterOverrides },
+                                context,
+                                finalTemplateLocation,
+                                buildTarget
+                            );
+                        }
+                    )
                 );
             }
         )
@@ -86,14 +109,14 @@ function startBuildImpl(
     options: SamExecuteBuilderOptions,
     context: BuilderContext,
     template: string,
-    target: Target
+    buildTarget: Target
 ) {
     const sam$ = runSam(options, context, template);
     // todo: it would be nice to wait until the first successful completion of build$ before triggering sam$
-    const build$ = scheduleTargetAndForget(context, target, {
+    const build$ = scheduleTargetAndForget(context, buildTarget, {
         watch: true,
     });
-    return combineLatest(sam$, build$).pipe(
+    return combineLatest([sam$, build$]).pipe(
         map(
             ([samResult, buildResult]): BuilderOutput => {
                 if (!samResult.success || !buildResult.success) {
@@ -149,12 +172,33 @@ function copyTemplate(
                 context,
                 templateFile
             ).pipe(
-                tap((finalTemplateLocation) => {
-                    copyFileSync(templateFile, finalTemplateLocation);
+                switchMap((finalTemplateLocation) => {
+                    return from(
+                        updateTemplate(
+                            templateFile,
+                            context,
+                            finalTemplateLocation
+                        )
+                    );
                 })
             );
         })
     );
+}
+
+async function updateTemplate(
+    templateFile: string,
+    context: BuilderContext,
+    finalTemplateLocation: string
+): Promise<string> {
+    const template = loadCloudFormationTemplate(templateFile);
+    await updateCloudFormationTemplate(template, context, {
+        templateFile,
+    });
+    writeFileSync(finalTemplateLocation, dumpCloudformationTemplate(template), {
+        encoding: 'utf-8',
+    });
+    return finalTemplateLocation;
 }
 
 function watchTemplate(

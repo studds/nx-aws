@@ -11,7 +11,7 @@ import { resolve } from 'path';
 export function getFinalTemplateLocation(
     outputTemplateFile: string,
     templateFile: string
-) {
+): string {
     const dir = parse(outputTemplateFile).dir;
     mkdirpSync(dir);
     const base = parse(templateFile).base;

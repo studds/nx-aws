@@ -11,7 +11,7 @@ However, what if your backend uses SAM?
 
 This project includes builders for that!
 
--   @nx-aws/sam:build - builds your functions and layers
+-   @nx-aws/sam:build - builds your functions
 -   @nx-aws/sam:package - packages your SAM (ie. CloudFormation) template ready for deployment
     (including resolving AWS::Serverless::Application references to other apps in your monorepo)
 -   @nx-aws/sam:deploy - deploys your CloudFormation template
@@ -52,8 +52,7 @@ Add the following to your `angular.json`
 ```
 
 The builder will search through your CloudFormation template at `apps/api/template.yaml`
-and find any `AWS::Serverless::Function` and `AWS::Serverless:LayerVersion` and trigger
-appropriate builds.
+and find any `AWS::Serverless::Function` and trigger appropriate builds.
 
 (All the other options are the same as for nrwl's node builder.)
 
@@ -77,7 +76,26 @@ The builder will run a webpack build for `src/my-function/handler-file`.
 
 ### Lambda Layers
 
-Lambda layers are not currently working, see issue #55
+Lambda layers defined in your template should Just Work - however, the way sam-cli treats layers is broken,
+so they won't: https://github.com/aws/aws-sam-cli/issues/2222.
+
+That said, if you've got a layer defined like this:
+
+```
+  TestLayer:
+    Type: AWS::Serverless::LayerVersion
+    Description: Test layer
+    Properties:
+      ContentUri: ./src/test-layer
+      CompatibleRuntimes:
+        - nodejs10.x
+        - nodejs12.x
+    Metadata:
+      BuildMethod: nodejs12.x
+```
+
+Then during `serve` or `build` nx-aws will simply map the `ContentUri` to an absolute path. Assuming you've got a
+layer at that location that `sam-cli` is happy with, then you're good to go.
 
 ## @nx-aws/sam:package
 
