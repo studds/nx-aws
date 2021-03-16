@@ -30,7 +30,7 @@ export function runCloudformationCommand(
                         args.push(`--${dasherize(arg)}`);
                         keys.forEach((key) => {
                             // todo: avoid this cast to any
-                            args.push(`${key}=${(value as any)[key]}`);
+                            args.push(`${key}="${(value as any)[key]}"`);
                         });
                     }
                 } else if (typeof value === 'boolean') {
