@@ -1,98 +1,95 @@
 {
-  "title": "Schema for Executing NodeJS apps",
-  "description": "NodeJS execution options",
-  "type": "object",
-  "properties": {
-    "resources": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "include": {
+    "title": "Schema for deploying static sites to AWS s3",
+    "description": "AWS S3 deploy options",
+    "type": "object",
+    "properties": {
+        "buildOutputPath": {
+            "type": "string",
+            "description": "Explicit path to the built output that will be uploaded to S3"
+        },
+        "buildTarget": {
+            "type": "string",
+            "description": "Target to retrieve outputPath from - by default, will use the build target on the current project"
+        },
+        "resources": {
             "type": "array",
             "items": {
-              "type": "string"
+                "type": "object",
+                "properties": {
+                    "include": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "cacheControl": {
+                        "type": "string"
+                    }
+                }
             }
-          },
-          "cacheControl": {
+        },
+        "destPrefix": {
             "type": "string"
-          }
-        }
-      }
-    },
-    "destPrefix": {
-      "type": "string"
-    },
-    "stackSuffix": {
-      "type": "string"
-    },
-    "bucket": {
-      "type": "object",
-      "properties": {
-        "targetName": {
-          "type": "string"
         },
-        "outputName": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "targetName",
-        "outputName"
-      ]
-    },
-    "distribution": {
-      "type": "object",
-      "properties": {
-        "targetName": {
-          "type": "string"
+        "stackSuffix": {
+            "type": "string"
         },
-        "outputName": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "targetName",
-        "outputName"
-      ]
-    },
-    "config": {
-      "type": "object",
-      "properties": {
-        "configFileName": {
-          "type": "string"
-        },
-        "importStackOutputs": {
-          "description": "Map of values to import from stacks defined by other projects. Values are in the format {project-name}:{target-name}.{output-name}. Note this is not on the basis of exported values.",
-          "type": "object",
-          "additionalProperties": {
+        "bucket": {
             "type": "object",
             "properties": {
-              "targetName": {
+                "targetName": {
+                    "type": "string"
+                },
+                "outputName": {
+                    "type": "string"
+                }
+            },
+            "required": ["targetName", "outputName"]
+        },
+        "distribution": {
+            "type": "object",
+            "properties": {
+                "targetName": {
+                    "type": "string"
+                },
+                "outputName": {
+                    "type": "string"
+                }
+            },
+            "required": ["targetName", "outputName"]
+        },
+        "config": {
+            "type": "object",
+            "properties": {
+                "configFileName": {
+                    "type": "string"
+                },
+                "importStackOutputs": {
+                    "description": "Map of values to import from stacks defined by other projects. Values are in the format {project-name}:{target-name}.{output-name}. Note this is not on the basis of exported values.",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                            "targetName": {
+                                "type": "string"
+                            },
+                            "outputName": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "required": ["configFileName", "importStackOutputs"]
+        },
+        "configValues": {
+            "description": "Map of config values - separate from config to allow easy overrides",
+            "type": "object",
+            "additionalProperties": {
                 "type": "string"
-              },
-              "outputName": {
-                "type": "string"
-              }
             }
-          }
         }
-      },
-      "required": [
-        "configFileName",
-        "importStackOutputs"
-      ]
     },
-    "configValues": {
-      "description": "Map of config values - separate from config to allow easy overrides",
-      "type": "object",
-      "additionalProperties": {
-        "type": "string"
-      }
-    }
-  },
-  "additionalProperties": false,
-  "required": [
-    "bucket"
-  ]
+    "additionalProperties": false,
+    "required": ["bucket"]
 }

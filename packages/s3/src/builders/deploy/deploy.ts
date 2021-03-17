@@ -17,6 +17,8 @@ export interface S3DeployOptionsResource extends JsonObject {
 }
 
 export interface S3DeployOptions extends JsonObject {
+    buildOutputPath: string | null;
+    buildTarget: string | null;
     resources: S3DeployOptionsResource[] | null;
     bucket: ImportStackOutput & JsonObject;
     distribution: (ImportStackOutput & JsonObject) | null;
@@ -42,7 +44,7 @@ export default createBuilder<S3DeployOptions>((options, context) => {
         config?.configFileName
     );
 
-    return from(getOutputDir(context)).pipe(
+    return from(getBuildOutputPath(options, context)).pipe(
         switchMap(async (outputDir) => {
             const map = config?.importStackOutputs || {};
             map.bucket = options.bucket;
@@ -90,18 +92,30 @@ export default createBuilder<S3DeployOptions>((options, context) => {
     );
 });
 
-async function getOutputDir(context: BuilderContext) {
-    const project = context.target && context.target.project;
-    if (!project) {
-        throw new Error(`Could not find project name for target`);
+async function getBuildOutputPath(
+    options: S3DeployOptions,
+    context: BuilderContext
+): Promise<string> {
+    if (options.buildOutputPath) {
+        return options.buildOutputPath;
+    }
+    const currentProject = context.target && context.target.project;
+    const buildTarget = options.buildTarget || `${currentProject}:build`;
+    const [project, target] = buildTarget.split(':');
+    if (!project || !target) {
+        throw new Error(
+            `Could not find project name for ${options.buildTarget} - invalid input`
+        );
     }
     const buildOptions = await context.getTargetOptions({
         project,
-        target: 'build',
+        target,
     });
     const outputDir = buildOptions.outputPath;
     if (typeof outputDir !== 'string') {
-        throw new Error(`Expected to get outputdir on target ${project}:build`);
+        throw new Error(
+            `Expected to get outputPath on target ${options.buildTarget}`
+        );
     }
     return outputDir;
 }
