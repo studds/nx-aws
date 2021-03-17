@@ -93,11 +93,16 @@ Resources:
             PolicyDocument:
                 Version: '2012-10-17'
                 Statement:
-                    - Effect: Allow
-                      Principal:
-                          CanonicalUser: !GetAtt CloudFrontOriginIdentity.S3CanonicalUserId
-                      Action: 's3:GetObject'
-                      Resource: !Sub '${WebBucket.Arn}/*'
+                  - Effect: Allow
+                    Principal:
+                        CanonicalUser: !GetAtt CloudFrontOriginIdentity.S3CanonicalUserId
+                    Action:
+                    - 's3:GetObject'
+                    # ListBucket is required so that a 404 is returned on misses
+                    - 's3:ListBucket'
+                    Resource:
+                    - !Sub '${WebBucket.Arn}/*'
+                    - !Sub '${WebBucket.Arn}'
 
     # The WebBucket is where we store our SPA
     WebBucket:
