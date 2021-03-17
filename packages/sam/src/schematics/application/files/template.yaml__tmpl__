@@ -51,7 +51,7 @@ Resources:
 
                 Origins:
                     # S3 - public subdir - we keep this separate for ease of deploying additional ambient state elsewhere in the bucket
-                    - DomainName: !Sub '${WebBucket}.s3-${AWS::Region}.amazonaws.com'
+                    - DomainName: !GetAtt WebBucket.RegionalDomainName
                       Id: protected-bucket-public
                       OriginPath: /public
                       S3OriginConfig:
