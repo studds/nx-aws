@@ -2,6 +2,17 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [0.12.0](https://github.com/studds/nx-aws/compare/v0.11.1...v0.12.0) (2021-03-17)
+
+
+### Bug Fixes
+
+* **sam:** fix [#66](https://github.com/studds/nx-aws/issues/66) generated WebBucketPolicy ([4775f04](https://github.com/studds/nx-aws/commit/4775f04ddc372cd3cb46d4043d511a7cbc46f458))
+* **sam:** fix [#67](https://github.com/studds/nx-aws/issues/67) s3 origin regional domain names ([a9f2646](https://github.com/studds/nx-aws/commit/a9f26469693f1a02e0974af15be8053c7da89509))
+* **sam:** handle spaces in parameter overrides closes [#63](https://github.com/studds/nx-aws/issues/63) ([45a5d35](https://github.com/studds/nx-aws/commit/45a5d3556755e0b61e9639a0744260f3b2f8a486))
+
+
+
 ## [0.11.1](https://github.com/studds/nx-aws/compare/v0.11.0...v0.11.1) (2021-03-03)
 
 
