@@ -33,7 +33,7 @@ describe('update-lambdas schematic', () => {
         );
     });
 
-    it('should run successfully', async () => {
+    xit('should run successfully', async () => {
         await expect(
             runSchematic('update-lambdas', options, appTree)
         ).resolves.not.toThrowError();
