@@ -25,7 +25,8 @@ import { getParameterOverrides } from '../../utils/getParameterOverrides';
 
 try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    require('dotenv').config({ silent: true });
+    const dotEnvResult = require('dotenv').config({ silent: true });
+    console.log(`Just loaded .env file with values`, dotEnvResult.parsed)
 } catch (e) {
     // ignore error
 }
