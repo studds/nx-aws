@@ -74,13 +74,14 @@ function startBuild(
                         'Builder options was missing template property'
                     );
                 }
+
                 return copyTemplate(options, context, template).pipe(
                     switchMap((finalTemplateLocation) =>
                         from(
                             getParameterOverrides(
                                 { ...options, templateFile: template },
                                 context,
-                                undefined
+                                options.mimicEnv
                             )
                         ).pipe(
                             map((parameterOverrides) => ({
