@@ -56,7 +56,7 @@
                 }
             ],
             "description": "Dependencies to keep external to the bundle. (\"all\" (default), \"none\", or an array of module names)",
-            "default": "all"
+            "default": "none"
         },
         "statsJson": {
             "type": "boolean",
@@ -121,6 +121,11 @@
         "generatePackageJson": {
             "type": "boolean",
             "description": "Generates a package.json file with the project's node_module dependencies populated for installing in a container. If a package.json exists in the project's directory, it will be reused with dependencies populated.",
+            "default": false
+        },
+        "buildPerFunction": {
+            "type": "boolean",
+            "description": "Runs a new webpack build for each function, rather than running one build for all functions.",
             "default": false
         }
     },

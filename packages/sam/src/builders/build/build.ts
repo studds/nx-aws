@@ -16,6 +16,7 @@ export interface ExtendedBuildBuilderOptions extends BuildNodeBuilderOptions {
     originalWebpackConfig?: string;
     template: string;
     entry: string | Entry;
+    buildPerFunction?: boolean;
 }
 export default createBuilder<ExtendedBuildBuilderOptions & JsonObject>(run);
 
@@ -46,7 +47,7 @@ export function run(
         return of({ emittedFiles: [], success: true });
     }
 
-    if (options.watch) {
+    if (options.watch || !options.buildPerFunction) {
         // in watch mode, we only want a single build for everything.
         const combinedEntry: Entry = {};
         entries.forEach((entry) => {
