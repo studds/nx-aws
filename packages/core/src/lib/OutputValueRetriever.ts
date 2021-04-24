@@ -3,14 +3,15 @@ import { formatStackName } from './formatStackName';
 import { getValidatedOptions } from './getValidatedOptions';
 import { BuilderContext } from '@angular-devkit/architect';
 import { ImportStackOutputs } from './ImportStackOutputs';
+import { JsonObject } from '@angular-devkit/core';
 
 // force AWS SDK to load config, in case region is set there
 process.env.AWS_SDK_LOAD_CONFIG = '1';
 
 export class OutputValueRetriever {
     private cfCache: Record<string, CloudFormation> = {};
-    private regionByTarget: Record<string, string | undefined> = {};
     private outputCache: Record<string, CloudFormation.Outputs> = {};
+    private optionsByTarget: Record<string, JsonObject> = {};
 
     async getOutputValues(
         importStackOutputs: ImportStackOutputs,
@@ -39,11 +40,9 @@ export class OutputValueRetriever {
         context: BuilderContext,
         stackSuffix: string | undefined
     ) {
-        const [sourceProjectName] = targetName.split(':');
-
-        const otherStackName = formatStackName(
-            sourceProjectName,
-            undefined,
+        const otherStackName = await this.getStackNameForTarget(
+            targetName,
+            context,
             stackSuffix
         );
         const outputs = await this.getStackOutputs(
@@ -106,17 +105,45 @@ export class OutputValueRetriever {
         targetName: string,
         context: BuilderContext
     ) {
-        if (!this.regionByTarget[targetName]) {
+        const options = await this.getOptionsForTarget(targetName, context);
+        const region =
+            typeof options.region === 'string' ? options.region : undefined;
+        return region;
+    }
+
+    private async getStackNameForTarget(
+        targetName: string,
+        context: BuilderContext,
+        currentStackSuffix: string | undefined
+    ) {
+        const [sourceProjectName] = targetName.split(':');
+
+        const options = await this.getOptionsForTarget(targetName, context);
+        const stackSuffix =
+            typeof options.stackSuffix === 'string'
+                ? options.stackSuffix
+                : currentStackSuffix;
+        const targetStackName = formatStackName(
+            sourceProjectName,
+            undefined,
+            stackSuffix
+        );
+        return targetStackName;
+    }
+
+    private async getOptionsForTarget(
+        targetName: string,
+        context: BuilderContext
+    ) {
+        if (!this.optionsByTarget[targetName]) {
             const options = await getValidatedOptions(
                 targetName,
                 context,
                 false
             ).toPromise();
-            const region =
-                typeof options.region === 'string' ? options.region : undefined;
-            this.regionByTarget[targetName] = region;
+            this.optionsByTarget[targetName] = options;
         }
-        return this.regionByTarget[targetName];
+        return this.optionsByTarget[targetName];
     }
 
     private getCfForRegion(region: string | undefined) {
