@@ -10,7 +10,7 @@
         "Monorepo"
     ],
     "main": "src/index.js",
-    "version": "0.12.1",
+    "version": "0.12.2",
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"
     }

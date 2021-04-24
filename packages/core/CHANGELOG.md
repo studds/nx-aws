@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.12.2](https://github.com/studds/nx-aws/compare/v0.12.1...v0.12.2) (2021-04-24)
+
+
+### Bug Fixes
+
+* importStackOutputs must derive stackname from target config ([56b4fb1](https://github.com/studds/nx-aws/commit/56b4fb1e4115779ae9ba6756c9550d7ff4f57d32))
+
+
+
 ## [0.12.1](https://github.com/studds/nx-aws/compare/v0.12.0...v0.12.1) (2021-04-07)
 
 
