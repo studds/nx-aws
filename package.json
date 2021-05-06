@@ -103,5 +103,10 @@
     "repository": "https://github.com/studds/nx-aws",
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"
+    },
+    "engines": {
+        "npm": "please-use-yarn",
+        "yarn": ">= 1.22.10",
+        "node": ">= 14.6.1"
     }
 }
