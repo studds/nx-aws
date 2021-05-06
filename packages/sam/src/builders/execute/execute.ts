@@ -25,7 +25,8 @@ import { getParameterOverrides } from '../../utils/getParameterOverrides';
 
 try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    require('dotenv').config({ silent: true });
+    const dotEnvResult = require('dotenv').config({ silent: true });
+    console.log(`Just loaded .env file with values`, dotEnvResult.parsed)
 } catch (e) {
     // ignore error
 }
@@ -74,13 +75,14 @@ function startBuild(
                         'Builder options was missing template property'
                     );
                 }
+
                 return copyTemplate(options, context, template).pipe(
                     switchMap((finalTemplateLocation) =>
                         from(
                             getParameterOverrides(
                                 { ...options, templateFile: template },
                                 context,
-                                undefined
+                                options.mimicEnv
                             )
                         ).pipe(
                             map((parameterOverrides) => ({

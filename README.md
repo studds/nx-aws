@@ -212,3 +212,20 @@ To build, run `yarn build`.
 workflow I've found is to copy across the files as the change. There's a script to do
 this: `yarn pack:copy --projectPath ../test-nx-aws/` - just change `../test-nx-aws` to your
 local test project.
+
+#### To test with NPM link
+
+Instructions for the SAM package.
+To test with other packages just substitute `sam` for the other package name
+
+We need to create a directory to copy the build files to `test-space`, 
+so that when we link them the npm install files don't  get deleted between builds.
+
+1. create a `test-space` directory
+2. `yarn build` or `nx run sam:build`
+3. `cp -R ./dist/packages/sam ./test-space`   
+4. cd into `test-space/sam`
+5. run `npm link` it will npm install 
+6. in the project you want to test you changes run `npm link @nx-aws/sam`
+7. rebuild you changes as needed `yarn build`
+8. `cp -R ./dist/packages/sam ./test-space`   
