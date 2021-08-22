@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [0.13.0](https://github.com/studds/nx-aws/compare/v0.12.2...v0.13.0) (2021-08-22)
+
+
+### Features
+
+* update to nx 12.1.1 ([074eb6a](https://github.com/studds/nx-aws/commit/074eb6a3c0b8e232c34f1355047a8e800124a331))
+
+
+
 ## [0.12.2](https://github.com/studds/nx-aws/compare/v0.12.1...v0.12.2) (2021-04-24)
 
 

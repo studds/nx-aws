@@ -1,6 +1,6 @@
 {
     "name": "@nx-aws/sam",
-    "version": "0.12.2",
+    "version": "0.13.0",
     "main": "src/index.js",
     "schematics": "./collection.json",
     "builders": "./builders.json",
