@@ -24,6 +24,7 @@ export = (
     // if the end-consumer provided their own function to customise the webpack config, run it
     const webpackConfig = options.options.originalWebpackConfig;
     if (webpackConfig) {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
         const configFn = require(webpackConfig);
         return configFn(config, options);
     }

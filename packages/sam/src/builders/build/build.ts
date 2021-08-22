@@ -1,18 +1,14 @@
-import { BuilderContext, createBuilder } from '@angular-devkit/architect';
 import { JsonObject } from '@angular-devkit/core';
-import { BuildResult, EmittedFiles } from '@angular-devkit/build-webpack';
 
-import { Observable, from, of } from 'rxjs';
+import { of } from 'rxjs';
 import { resolve } from 'path';
 import { getEntriesFromCloudFormation } from './get-entries-from-cloudformation';
-import { concatMap, map, toArray } from 'rxjs/operators';
-import { Target } from '@angular-devkit/architect/src/output-schema';
 import { Entry } from 'webpack';
 import { loadCloudFormationTemplate } from '../../utils/load-cloud-formation-template';
 import { assert } from 'ts-essentials';
 import { BuildNodeBuilderOptions } from '@nrwl/node/src/utils/types';
-import { NodeBuildEvent } from '@nrwl/node/src/executors/build/build.impl';
-import buildExecutor from '@nrwl/node/src/executors/build/compat';
+import { buildExecutor } from '@nrwl/node/src/executors/build/build.impl';
+import { ExecutorContext } from '@nrwl/tao/src/shared/workspace';
 
 export interface ExtendedBuildBuilderOptions extends BuildNodeBuilderOptions {
     originalWebpackConfig?: string;
@@ -20,7 +16,7 @@ export interface ExtendedBuildBuilderOptions extends BuildNodeBuilderOptions {
     entry: string | Entry;
     buildPerFunction?: boolean;
 }
-export default createBuilder<ExtendedBuildBuilderOptions & JsonObject>(run);
+export default cfBuilder;
 
 /**
  * Custom build function for CloudFormation templates.
@@ -29,10 +25,10 @@ export default createBuilder<ExtendedBuildBuilderOptions & JsonObject>(run);
  * and finds things to build. Right now, it handles AWS::Serverless::Function
  *
  */
-export function run(
+export async function* cfBuilder(
     options: ExtendedBuildBuilderOptions & JsonObject,
-    context: BuilderContext
-): Observable<BuildResult> {
+    context: ExecutorContext
+) {
     normaliseOptions(options, context);
 
     // we inspect the CloudFormation template and return webpack entries for the functions
@@ -40,79 +36,38 @@ export function run(
     // NB: there's one entry per function. This gives us more flexibility when it comes to
     // optimising the package for each function.
     const cf = loadCloudFormationTemplate(options.template);
-    let entries = getEntriesFromCloudFormation(options, cf);
+    const entriesPerFn = getEntriesFromCloudFormation(options, cf);
 
-    if (entries.length === 0) {
-        context.logger.info(
-            `Didn't find anything to build in CloudFormation template`
-        );
+    if (entriesPerFn.length === 0) {
+        console.log(`Didn't find anything to build in CloudFormation template`);
         return of({ emittedFiles: [], success: true });
     }
 
-    if (options.watch || !options.buildPerFunction) {
-        // in watch mode, we only want a single build for everything.
-        const combinedEntry: Entry = {};
-        entries.forEach((entry) => {
-            Object.keys(entry).forEach((key) => {
-                combinedEntry[key] = entry[key];
-            });
+    assert(
+        !options.buildPerFunction,
+        `Had to disable build per function for nx 12, honestly not that useful`
+    );
+
+    // in watch mode, we only want a single build for everything.
+    const combinedEntry: Entry = {};
+    entriesPerFn.forEach((entry) => {
+        Object.keys(entry).forEach((key) => {
+            combinedEntry[key] = entry[key];
         });
-        entries = [combinedEntry];
-    }
+    });
 
     // we customise the build itself by passing a webpack config customising function to nrwl's builder
-    addOurCustomWebpackConfig(options, context);
+    addOurCustomWebpackConfig(options);
 
     // and now... to run the build
 
-    return from(entries).pipe(
-        // concatMap means "map this array to another observable, and run one at a time"
-        // we're kicking off one build per entry; using concat map means only one build runs at a time
-        concatMap(
-            (entry): Observable<NodeBuildEvent> => {
-                context.logger.log(
-                    'info',
-                    `Running build for entry ${Object.keys(entry)[0]}`
-                );
-                // we have to have something here to keep the validation on nrwl's builder happy.
-                options.main = 'placeholder to keep validation happy';
-                // in our custom webpack config, we use this instead of nrwl's entry. Slightly
-                // dirty, but gives us more control for very little cost :-)
-                options.entry = entry;
-                // kick off the build itself;
-                return buildExecutor(options, context);
-                // TODO: use scheduleBuilder instead once @nrwl/node:build supports that usecase
-                // return from(context.scheduleBuilder('@nrwl/node:build', options)).pipe(
-                //     switchMap(p => p.output)
-                // );
-            }
-        ),
-        toArray(),
-        map(
-            (results): BuildResult => {
-                // probably overkill, but compile all the results.
-                const emittedFiles: EmittedFiles[] = [];
-                const info: {
-                    [key: string]: any;
-                } = {};
-                // only successful if we've got the same number of results as we have entries.
-                let success = results.length === entries.length;
-                let target: Target | undefined;
-                results.forEach((result) => {
-                    emittedFiles.push(result.outfile);
-                    if (!result.success) {
-                        success = false;
-                    }
-                });
-                return ({
-                    emittedFiles,
-                    info,
-                    success,
-                    target,
-                } as unknown) as BuildResult;
-            }
-        )
-    );
+    // we have to have something here to keep the validation on nrwl's builder happy.
+    options.main = 'placeholder to keep validation happy';
+    // in our custom webpack config, we use this instead of nrwl's entry. Slightly
+    // dirty, but gives us more control for very little cost :-)
+    options.entry = combinedEntry;
+    // kick off the build itself;
+    return yield* buildExecutor(options, context);
 }
 
 /**
@@ -122,23 +77,17 @@ export function run(
  *
  */
 function addOurCustomWebpackConfig(
-    options: ExtendedBuildBuilderOptions & JsonObject,
-    context: BuilderContext
+    options: ExtendedBuildBuilderOptions & JsonObject
 ) {
-    const webpackConfig = resolve(__dirname, 'config.js');
-    // cache the original webpack config path for later :-)
-    // our custom webpack config will trigger this, to allow downstream users to further customise.
+    const webpackConfigPath = resolve(__dirname, 'config.js');
     if (options.webpackConfig) {
-        assert(
-            typeof options.webpackConfig === 'string',
-            `options.webpackConfig only supports a single string currently`
-        );
-        options.originalWebpackConfig = resolve(
-            context.workspaceRoot,
-            options.webpackConfig
-        );
+        const webpackConfig = Array.isArray(options.webpackConfig)
+            ? options.webpackConfig
+            : [options.webpackConfig];
+        options.webpackConfig = [...webpackConfig, webpackConfigPath];
+    } else {
+        options.webpackConfig = [webpackConfigPath];
     }
-    options.webpackConfig = webpackConfig;
 }
 
 /**
@@ -149,9 +98,9 @@ function addOurCustomWebpackConfig(
  */
 function normaliseOptions(
     options: ExtendedBuildBuilderOptions & JsonObject,
-    context: BuilderContext
+    context: ExecutorContext
 ) {
     // normalise the path to the template
     const originalTemplatePath = options.template;
-    options.template = resolve(context.workspaceRoot, originalTemplatePath);
+    options.template = resolve(context.root, originalTemplatePath);
 }

@@ -1,10 +1,12 @@
 import Resource from 'cloudform-types/types/resource';
 import { resolve, relative } from 'path';
-import { Globals } from '@nx-aws/sam';
 import { ExtendedBuildBuilderOptions } from './build';
 import { Entry } from 'webpack';
 import { getLambdaSourcePath } from '../../utils/getLambdaSourcePath';
-import { ParsedSamTemplate } from '../../utils/load-cloud-formation-template';
+import {
+    Globals,
+    ParsedSamTemplate,
+} from '../../utils/load-cloud-formation-template';
 
 /**
  * Read the CloudFormation template yaml, and use it to identify our input files.

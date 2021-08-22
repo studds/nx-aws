@@ -1,108 +1,6 @@
 {
     "version": 1,
     "projects": {
-        "sam": {
-            "root": "packages/sam",
-            "sourceRoot": "packages/sam/src",
-            "projectType": "library",
-            "schematics": {},
-            "architect": {
-                "lint": {
-                    "builder": "@nrwl/linter:eslint",
-                    "options": {
-                        "lintFilePatterns": [
-                            "packages/sam/**/*.ts",
-                            "packages/sam/**/*.spec.ts",
-                            "packages/sam/**/*.spec.tsx",
-                            "packages/sam/**/*.spec.js",
-                            "packages/sam/**/*.spec.jsx",
-                            "packages/sam/**/*.d.ts"
-                        ]
-                    }
-                },
-                "test": {
-                    "builder": "@nrwl/jest:jest",
-                    "options": {
-                        "jestConfig": "packages/sam/jest.config.js",
-                        "passWithNoTests": true
-                    },
-                    "outputs": ["coverage/packages/sam"]
-                },
-                "build": {
-                    "builder": "@nrwl/node:package",
-                    "options": {
-                        "outputPath": "dist/packages/sam",
-                        "tsConfig": "packages/sam/tsconfig.lib.json",
-                        "packageJson": "packages/sam/package.json",
-                        "main": "packages/sam/src/index.ts",
-                        "assets": [
-                            "packages/sam/*.md",
-                            {
-                                "input": "./packages/sam/src",
-                                "glob": "**/*.!(ts)",
-                                "output": "./src"
-                            },
-                            {
-                                "input": "./packages/sam",
-                                "glob": "collection.json",
-                                "output": "."
-                            },
-                            {
-                                "input": "./packages/sam",
-                                "glob": "builders.json",
-                                "output": "."
-                            }
-                        ],
-                        "srcRootForCompilationRoot": "packages/sam"
-                    },
-                    "outputs": ["{options.outputPath}"]
-                },
-                "publish": {
-                    "builder": "@nrwl/workspace:run-commands",
-                    "options": {
-                        "parallel": false,
-                        "commands": [
-                            {
-                                "command": "npx monorepo-package-tool --rootModuleDir packages/sam --destDir dist/packages/sam"
-                            },
-                            {
-                                "command": "npm publish dist/packages/sam --access public --tag $NPM_TAG"
-                            }
-                        ]
-                    }
-                },
-                "pack": {
-                    "builder": "@nrwl/workspace:run-commands",
-                    "options": {
-                        "parallel": false,
-                        "commands": [
-                            {
-                                "command": "npx monorepo-package-tool --rootModuleDir packages/sam --destDir dist/packages/sam"
-                            },
-                            {
-                                "command": "npm pack dist/packages/sam"
-                            }
-                        ]
-                    }
-                }
-            }
-        },
-        "sam-e2e": {
-            "projectType": "application",
-            "root": "e2e/sam-e2e",
-            "sourceRoot": "e2e/sam-e2e/src",
-            "architect": {
-                "e2e": {
-                    "builder": "@nrwl/nx-plugin:e2e",
-                    "options": {
-                        "target": "sam:build",
-                        "npmPackageName": "@nx-aws/sam",
-                        "pluginOutputPath": "dist/packages/sam",
-                        "jestConfig": "e2e/sam-e2e/jest.config.js"
-                    }
-                }
-            }
-        },
         "core": {
             "root": "packages/core",
             "sourceRoot": "packages/core/src",
@@ -287,6 +185,108 @@
                         "npmPackageName": "@nx-aws/s3",
                         "pluginOutputPath": "dist/packages/s3",
                         "jestConfig": "e2e/s3-e2e/jest.config.js"
+                    }
+                }
+            }
+        },
+        "sam": {
+            "root": "packages/sam",
+            "sourceRoot": "packages/sam/src",
+            "projectType": "library",
+            "schematics": {},
+            "architect": {
+                "lint": {
+                    "builder": "@nrwl/linter:eslint",
+                    "options": {
+                        "lintFilePatterns": [
+                            "packages/sam/**/*.ts",
+                            "packages/sam/**/*.spec.ts",
+                            "packages/sam/**/*.spec.tsx",
+                            "packages/sam/**/*.spec.js",
+                            "packages/sam/**/*.spec.jsx",
+                            "packages/sam/**/*.d.ts"
+                        ]
+                    }
+                },
+                "test": {
+                    "builder": "@nrwl/jest:jest",
+                    "options": {
+                        "jestConfig": "packages/sam/jest.config.js",
+                        "passWithNoTests": true
+                    },
+                    "outputs": ["coverage/packages/sam"]
+                },
+                "build": {
+                    "builder": "@nrwl/node:package",
+                    "options": {
+                        "outputPath": "dist/packages/sam",
+                        "tsConfig": "packages/sam/tsconfig.lib.json",
+                        "packageJson": "packages/sam/package.json",
+                        "main": "packages/sam/src/index.ts",
+                        "assets": [
+                            "packages/sam/*.md",
+                            {
+                                "input": "./packages/sam/src",
+                                "glob": "**/*.!(ts)",
+                                "output": "./src"
+                            },
+                            {
+                                "input": "./packages/sam",
+                                "glob": "collection.json",
+                                "output": "."
+                            },
+                            {
+                                "input": "./packages/sam",
+                                "glob": "builders.json",
+                                "output": "."
+                            }
+                        ],
+                        "srcRootForCompilationRoot": "packages/sam"
+                    },
+                    "outputs": ["{options.outputPath}"]
+                },
+                "publish": {
+                    "builder": "@nrwl/workspace:run-commands",
+                    "options": {
+                        "parallel": false,
+                        "commands": [
+                            {
+                                "command": "npx monorepo-package-tool --rootModuleDir packages/sam --destDir dist/packages/sam"
+                            },
+                            {
+                                "command": "npm publish dist/packages/sam --access public --tag $NPM_TAG"
+                            }
+                        ]
+                    }
+                },
+                "pack": {
+                    "builder": "@nrwl/workspace:run-commands",
+                    "options": {
+                        "parallel": false,
+                        "commands": [
+                            {
+                                "command": "npx monorepo-package-tool --rootModuleDir packages/sam --destDir dist/packages/sam"
+                            },
+                            {
+                                "command": "npm pack dist/packages/sam"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        "sam-e2e": {
+            "projectType": "application",
+            "root": "e2e/sam-e2e",
+            "sourceRoot": "e2e/sam-e2e/src",
+            "architect": {
+                "e2e": {
+                    "builder": "@nrwl/nx-plugin:e2e",
+                    "options": {
+                        "target": "sam:build",
+                        "npmPackageName": "@nx-aws/sam",
+                        "pluginOutputPath": "dist/packages/sam",
+                        "jestConfig": "e2e/sam-e2e/jest.config.js"
                     }
                 }
             }

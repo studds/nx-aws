@@ -4,6 +4,7 @@ import { getValidatedOptions } from './getValidatedOptions';
 import { BuilderContext } from '@angular-devkit/architect';
 import { ImportStackOutputs } from './ImportStackOutputs';
 import { JsonObject } from '@angular-devkit/core';
+import { assert } from 'console';
 
 // force AWS SDK to load config, in case region is set there
 process.env.AWS_SDK_LOAD_CONFIG = '1';
@@ -116,9 +117,36 @@ export class OutputValueRetriever {
         context: BuilderContext,
         currentStackSuffix: string | undefined
     ) {
-        const [sourceProjectName] = targetName.split(':');
+        const [
+            sourceProjectName,
+            sourceTargetName,
+            explicitConfig,
+        ] = targetName.split(':');
 
-        const options = await this.getOptionsForTarget(targetName, context);
+        assert(
+            sourceProjectName && sourceTargetName,
+            `Malformed target ${targetName}: must be in format {projectName}:{targetName}[:{configName}]`
+        );
+
+        const targetNameParts = [sourceProjectName, sourceTargetName];
+        if (explicitConfig) {
+            targetNameParts.push(explicitConfig);
+        } else if (context.target && context.target.configuration) {
+            targetNameParts.push(context.target.configuration);
+        }
+        const resolvedTargetName = targetNameParts.join(':');
+
+        const options = await this.getOptionsForTarget(
+            resolvedTargetName,
+            context
+        );
+        if (!options.stackSuffix) {
+            console.warn(
+                `Expected to get a stackSuffix from ${resolvedTargetName}: defaulting to ${
+                    currentStackSuffix ?? 'dev'
+                }`
+            );
+        }
         const stackSuffix =
             typeof options.stackSuffix === 'string'
                 ? options.stackSuffix

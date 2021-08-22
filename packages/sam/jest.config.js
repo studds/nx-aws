@@ -11,4 +11,5 @@ module.exports = {
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
     coverageDirectory: '../../coverage/packages/sam',
     displayName: 'sam',
+    testEnvironment: 'node',
 };

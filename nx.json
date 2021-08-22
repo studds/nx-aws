@@ -23,13 +23,6 @@
         }
     },
     "projects": {
-        "sam": {
-            "tags": []
-        },
-        "sam-e2e": {
-            "tags": [],
-            "implicitDependencies": ["sam"]
-        },
         "core": {
             "tags": []
         },
@@ -40,6 +33,13 @@
             "tags": [],
             "implicitDependencies": ["s3"]
         },
+        "sam": {
+            "tags": []
+        },
+        "sam-e2e": {
+            "tags": [],
+            "implicitDependencies": ["sam"]
+        },
         "workspace": {
             "tags": []
         }
@@ -47,5 +47,13 @@
     "workspaceLayout": {
         "appsDir": "e2e",
         "libsDir": "packages"
+    },
+    "targetDependencies": {
+        "build": [
+            {
+                "target": "build",
+                "projects": "dependencies"
+            }
+        ]
     }
 }

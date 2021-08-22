@@ -1,8 +1,15 @@
 {
     "$schema": "../../node_modules/@angular-devkit/architect/src/builders-schema.json",
-    "builders": {
+    "executors": {
         "build": {
             "implementation": "./src/builders/build/build",
+            "schema": "./src/builders/build/schema.json",
+            "description": "Build a SAM application"
+        }
+    },
+    "builders": {
+        "build": {
+            "implementation": "./src/builders/build/compat",
             "schema": "./src/builders/build/schema.json",
             "description": "Build a SAM application"
         },
