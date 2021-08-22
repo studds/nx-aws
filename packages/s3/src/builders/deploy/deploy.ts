@@ -6,9 +6,12 @@ import {
     OutputValueRetriever,
     ImportStackOutput,
     ImportStackOutputs,
+    importDotenv,
 } from '@nx-aws/core';
 import { writeFileSync } from 'fs';
 import { resolve } from 'path';
+
+importDotenv();
 
 export interface S3DeployOptionsResource extends JsonObject {
     include: string[];
@@ -32,10 +35,6 @@ export interface S3DeployOptions extends JsonObject {
 }
 
 const outputValueRetriever = new OutputValueRetriever();
-
-try {
-    require('dotenv').config({ silent: true });
-} catch (err) {}
 
 export default createBuilder<S3DeployOptions>((options, context) => {
     const config = options.config;

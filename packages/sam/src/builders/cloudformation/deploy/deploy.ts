@@ -2,7 +2,11 @@ import { createBuilder } from '@angular-devkit/architect';
 import { JsonObject } from '@angular-devkit/core';
 import { runCloudformationCommand } from '../run-cloudformation-command';
 import { CloudFormationDeployOptions } from './CloudFormationDeployOptions';
-import { ImportStackOutputs, formatStackName } from '@nx-aws/core';
+import {
+    ImportStackOutputs,
+    formatStackName,
+    importDotenv,
+} from '@nx-aws/core';
 import { IParameterOverrides } from './IParameterOverrides';
 import { getParameterOverrides } from '../../../utils/getParameterOverrides';
 
@@ -54,9 +58,7 @@ interface IDeployOptions extends JsonObject {
     stackSuffix: string | null;
 }
 
-try {
-    require('dotenv').config();
-} catch (e) {}
+importDotenv();
 
 export default createBuilder<IDeployOptions>(async (options, context) => {
     const { capabilities, region, s3Bucket, s3Prefix, templateFile } = options;

@@ -6,8 +6,12 @@
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "parserOptions": {
-        "project": "./tsconfig.*?.json"
+        "project": ["./tsconfig.*?.json"]
       },
+      "rules": {}
+    },
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
         "@nrwl/nx/enforce-module-boundaries": [
           "error",
@@ -27,9 +31,6 @@
     {
       "files": ["*.ts", "*.tsx"],
       "extends": ["plugin:@nrwl/nx/typescript"],
-      "parserOptions": {
-        "project": "./tsconfig.*?.json"
-      },
       "rules": {}
     },
     {

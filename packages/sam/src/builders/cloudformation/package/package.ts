@@ -8,6 +8,7 @@ import { getFinalTemplateLocation } from '../get-final-template-location';
 import { loadCloudFormationTemplate } from '../../../utils/load-cloud-formation-template';
 import { dumpCloudformationTemplate } from '../../../utils/dumpCloudformationTemplate';
 import { updateCloudFormationTemplate } from './updateCloudFormationTemplate';
+import { importDotenv } from '@nx-aws/core';
 
 // todo: allow overriding some / all of these with environment variables
 export interface IPackageOptions extends JsonObject {
@@ -39,12 +40,7 @@ export interface IPackageOptions extends JsonObject {
     region: string | null;
 }
 
-try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    require('dotenv').config();
-} catch (e) {
-    // ignore any error
-}
+importDotenv();
 
 export default createBuilder<IPackageOptions>(
     (options: IPackageOptions, context: BuilderContext) => {

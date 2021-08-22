@@ -189,22 +189,6 @@
                 }
             }
         },
-        "core-e2e": {
-            "projectType": "application",
-            "root": "e2e/core-e2e",
-            "sourceRoot": "e2e/core-e2e/src",
-            "architect": {
-                "e2e": {
-                    "builder": "@nrwl/nx-plugin:e2e",
-                    "options": {
-                        "target": "core:build",
-                        "npmPackageName": "@nx-aws/core",
-                        "pluginOutputPath": "dist/packages/core",
-                        "jestConfig": "e2e/core-e2e/jest.config.js"
-                    }
-                }
-            }
-        },
         "s3": {
             "root": "packages/s3",
             "sourceRoot": "packages/s3/src",

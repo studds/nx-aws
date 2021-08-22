@@ -3,14 +3,16 @@ import { JsonObject } from '@angular-devkit/core';
 import { BuildResult, EmittedFiles } from '@angular-devkit/build-webpack';
 
 import { Observable, from, of } from 'rxjs';
-import { nodeBuilder, BuildNodeBuilderOptions } from './node-build';
 import { resolve } from 'path';
 import { getEntriesFromCloudFormation } from './get-entries-from-cloudformation';
 import { concatMap, map, toArray } from 'rxjs/operators';
 import { Target } from '@angular-devkit/architect/src/output-schema';
 import { Entry } from 'webpack';
-import { NodeBuildEvent } from '@nrwl/node/src/builders/build/build.impl';
 import { loadCloudFormationTemplate } from '../../utils/load-cloud-formation-template';
+import { assert } from 'ts-essentials';
+import { BuildNodeBuilderOptions } from '@nrwl/node/src/utils/types';
+import { NodeBuildEvent } from '@nrwl/node/src/executors/build/build.impl';
+import buildExecutor from '@nrwl/node/src/executors/build/compat';
 
 export interface ExtendedBuildBuilderOptions extends BuildNodeBuilderOptions {
     originalWebpackConfig?: string;
@@ -78,7 +80,7 @@ export function run(
                 // dirty, but gives us more control for very little cost :-)
                 options.entry = entry;
                 // kick off the build itself;
-                return nodeBuilder(options, context);
+                return buildExecutor(options, context);
                 // TODO: use scheduleBuilder instead once @nrwl/node:build supports that usecase
                 // return from(context.scheduleBuilder('@nrwl/node:build', options)).pipe(
                 //     switchMap(p => p.output)
@@ -97,9 +99,7 @@ export function run(
                 let success = results.length === entries.length;
                 let target: Target | undefined;
                 results.forEach((result) => {
-                    Object.assign(info, result.info);
-                    target = result.target;
-                    emittedFiles.push(...(result.emittedFiles || []));
+                    emittedFiles.push(result.outfile);
                     if (!result.success) {
                         success = false;
                     }
@@ -129,6 +129,10 @@ function addOurCustomWebpackConfig(
     // cache the original webpack config path for later :-)
     // our custom webpack config will trigger this, to allow downstream users to further customise.
     if (options.webpackConfig) {
+        assert(
+            typeof options.webpackConfig === 'string',
+            `options.webpackConfig only supports a single string currently`
+        );
         options.originalWebpackConfig = resolve(
             context.workspaceRoot,
             options.webpackConfig

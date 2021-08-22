@@ -1,10 +1,15 @@
 module.exports = {
-  name: 'sam-e2e',
-  preset: '../../jest.config.js',
-  globals: {
-    'ts-jest': {
-      tsConfig: '<rootDir>/tsconfig.spec.json',
+    displayName: 'sam-e2e',
+    preset: '../../jest.preset.js',
+    globals: {
+        'ts-jest': {
+            tsconfig: '<rootDir>/tsconfig.spec.json',
+        },
     },
-  },
-  coverageDirectory: '../../coverage/e2e/sam-e2e',
+    transform: {
+        '^.+\\.[tj]sx?$': 'ts-jest',
+    },
+    moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
+    coverageDirectory: '../../coverage/e2e/sam-e2e',
+    testTimeout: 900000,
 };

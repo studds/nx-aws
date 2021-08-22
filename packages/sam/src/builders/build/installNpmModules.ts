@@ -1,11 +1,10 @@
-import { JsonObject } from '@angular-devkit/core';
 import { join } from 'path';
-import { BuildNodeBuilderOptions } from '@nrwl/node/src/utils/types';
+import { NormalizedBuildNodeBuilderOptions } from '@nrwl/node/src/utils/types';
 import { execSync } from 'child_process';
 import { readFileSync, writeFileSync } from 'fs';
 
 export function installNpmModules(
-    normalizedOptions: JsonObject & BuildNodeBuilderOptions
+    normalizedOptions: NormalizedBuildNodeBuilderOptions
 ) {
     const packageJsonPath = join(normalizedOptions.outputPath, 'package.json');
     const packagejson = JSON.parse(

@@ -1,66 +1,51 @@
 {
-  "npmScope": "nx-aws",
-  "affected": {
-    "defaultBase": "master"
-  },
-  "implicitDependencies": {
-    "workspace.json": "*",
-    "package.json": {
-      "dependencies": "*",
-      "devDependencies": "*"
+    "npmScope": "nx-aws",
+    "affected": {
+        "defaultBase": "master"
     },
-    "tsconfig.base.json": "*",
-    "tslint.json": "*",
-    "nx.json": "*",
-    ".eslintrc.json": "*"
-  },
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "@nrwl/workspace/tasks-runners/default",
-      "options": {
-        "cacheableOperations": [
-          "build",
-          "lint",
-          "test",
-          "e2e"
-        ]
-      }
+    "implicitDependencies": {
+        "workspace.json": "*",
+        "package.json": {
+            "dependencies": "*",
+            "devDependencies": "*"
+        },
+        "tsconfig.base.json": "*",
+        "tslint.json": "*",
+        "nx.json": "*",
+        ".eslintrc.json": "*"
+    },
+    "tasksRunnerOptions": {
+        "default": {
+            "runner": "@nrwl/workspace/tasks-runners/default",
+            "options": {
+                "cacheableOperations": ["build", "lint", "test", "e2e"]
+            }
+        }
+    },
+    "projects": {
+        "sam": {
+            "tags": []
+        },
+        "sam-e2e": {
+            "tags": [],
+            "implicitDependencies": ["sam"]
+        },
+        "core": {
+            "tags": []
+        },
+        "s3": {
+            "tags": []
+        },
+        "s3-e2e": {
+            "tags": [],
+            "implicitDependencies": ["s3"]
+        },
+        "workspace": {
+            "tags": []
+        }
+    },
+    "workspaceLayout": {
+        "appsDir": "e2e",
+        "libsDir": "packages"
     }
-  },
-  "projects": {
-    "sam": {
-      "tags": []
-    },
-    "sam-e2e": {
-      "tags": [],
-      "implicitDependencies": [
-        "sam"
-      ]
-    },
-    "core": {
-      "tags": []
-    },
-    "core-e2e": {
-      "tags": [],
-      "implicitDependencies": [
-        "core"
-      ]
-    },
-    "s3": {
-      "tags": []
-    },
-    "s3-e2e": {
-      "tags": [],
-      "implicitDependencies": [
-        "s3"
-      ]
-    },
-    "workspace": {
-      "tags": []
-    }
-  },
-  "workspaceLayout": {
-    "appsDir": "e2e",
-    "libsDir": "packages"
-  }
 }

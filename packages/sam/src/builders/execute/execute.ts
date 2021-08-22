@@ -16,19 +16,14 @@ import { runSam } from './run-sam';
 import { JsonObject } from '@angular-devkit/core';
 import { getFinalTemplateLocation } from '../cloudformation/get-final-template-location';
 import { watch, writeFileSync } from 'fs';
-import { getValidatedOptions } from '@nx-aws/core';
+import { getValidatedOptions, importDotenv } from '@nx-aws/core';
 import { loadEnvFromStack } from '../../utils/loadEnvFromStack';
 import { updateCloudFormationTemplate } from '../cloudformation/package/updateCloudFormationTemplate';
 import { loadCloudFormationTemplate } from '../../utils/load-cloud-formation-template';
 import { dumpCloudformationTemplate } from '../../utils/dumpCloudformationTemplate';
 import { getParameterOverrides } from '../../utils/getParameterOverrides';
 
-try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    require('dotenv').config({ silent: true });
-} catch (e) {
-    // ignore error
-}
+importDotenv();
 
 export const enum InspectType {
     Inspect = 'inspect',

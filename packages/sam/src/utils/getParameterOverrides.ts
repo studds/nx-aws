@@ -35,10 +35,13 @@ export async function getParameterOverrides(
         };
     }
     for (const key in parameters) {
-        if (parameters.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(parameters, key)) {
             if (
                 options.parameterOverrides &&
-                options.parameterOverrides.hasOwnProperty(key)
+                Object.prototype.hasOwnProperty.call(
+                    options.parameterOverrides,
+                    key
+                )
             ) {
                 overrides[key] = options.parameterOverrides[key];
             } else {
