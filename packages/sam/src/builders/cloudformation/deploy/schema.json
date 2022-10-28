@@ -1,74 +1,68 @@
 {
-  "title": "SAM Application Deploy Target",
-  "description": "Deploys the SAM Application using the AWS CLI",
-  "type": "object",
-  "properties": {
-    "templateFile": {
-      "description": "The path where your AWS CloudFormation template is located.",
-      "type": "string",
-      "title": "templateFile"
-    },
-    "s3Bucket": {
-      "description": "The name of the S3 bucket where this command uploads the artefacts that are referenced in your template.",
-      "type": "string",
-      "title": "s3Bucket"
-    },
-    "s3Prefix": {
-      "description": "A prefix name that the command adds to the artifacts' name when it uploads them to the S3 bucket. The\nprefix name is a path name (folder name) for the S3 bucket.",
-      "type": "string",
-      "title": "s3Prefix"
-    },
-    "capabilities": {
-      "description": "A list of capabilities that you must specify before AWS Cloudformation can create certain stacks.\nSome stack templates might include resources that can affect permissions in your AWS account,\nfor example, by creating new AWS Identity and Access Management (IAM) users. For those stacks,\n  you must explicitly acknowledge their capabilities by specifying this parameter. The only valid\n  values are CAPABILITY_IAM and CAPABILITY_NAMED_IAM. If you have IAM resources, you can specify\n  either capability. If you have IAM resources with custom names, you must specify CAPABILITY_NAMED_IAM.\n   If you don't specify this parameter, this action returns an InsufficientCapabilities error.",
-      "type": "array",
-      "items": {
-        "enum": [
-          "CAPABILITY_AUTO_EXPAND",
-          "CAPABILITY_IAM",
-          "CAPABILITY_NAMED_IAM"
-        ],
-        "type": "string"
-      },
-      "title": "capabilities"
-    },
-    "region": {
-      "description": "The region to deploy this stack",
-      "type": "string",
-      "title": "region"
-    },
-    "importStackOutputs": {
-      "description": "Map of values to import from stacks defined by other projects. Values are in the format {project-name}:{target-name}.{output-name}. Note this is not on the basis of exported values.",
-      "type": "object",
-      "additionalProperties": {
-        "type": "object",
-        "properties": {
-          "targetName": {
-            "type": "string"
-          },
-          "outputName": {
-            "type": "string"
-          }
+    "title": "SAM Application Deploy Target",
+    "description": "Deploys the SAM Application using the AWS CLI",
+    "type": "object",
+    "properties": {
+        "templateFile": {
+            "description": "The path where your AWS CloudFormation template is located.",
+            "type": "string",
+            "title": "templateFile"
         },
-        "required": [
-          "targetName",
-          "outputName"
-        ]
-      }
+        "s3Bucket": {
+            "description": "The name of the S3 bucket where this command uploads the artefacts that are referenced in your template.",
+            "type": "string",
+            "title": "s3Bucket"
+        },
+        "s3Prefix": {
+            "description": "A prefix name that the command adds to the artifacts' name when it uploads them to the S3 bucket. The\nprefix name is a path name (folder name) for the S3 bucket.",
+            "type": "string",
+            "title": "s3Prefix"
+        },
+        "capabilities": {
+            "description": "A list of capabilities that you must specify before AWS Cloudformation can create certain stacks.\nSome stack templates might include resources that can affect permissions in your AWS account,\nfor example, by creating new AWS Identity and Access Management (IAM) users. For those stacks,\n  you must explicitly acknowledge their capabilities by specifying this parameter. The only valid\n  values are CAPABILITY_IAM and CAPABILITY_NAMED_IAM. If you have IAM resources, you can specify\n  either capability. If you have IAM resources with custom names, you must specify CAPABILITY_NAMED_IAM.\n   If you don't specify this parameter, this action returns an InsufficientCapabilities error.",
+            "type": "array",
+            "items": {
+                "enum": [
+                    "CAPABILITY_AUTO_EXPAND",
+                    "CAPABILITY_IAM",
+                    "CAPABILITY_NAMED_IAM"
+                ],
+                "type": "string"
+            },
+            "title": "capabilities"
+        },
+        "region": {
+            "description": "The region to deploy this stack",
+            "type": "string",
+            "title": "region"
+        },
+        "importStackOutputs": {
+            "description": "Map of values to import from stacks defined by other projects. Values are in the format {project-name}:{target-name}.{output-name}. Note this is not on the basis of exported values.",
+            "type": "object",
+            "additionalProperties": {
+                "type": "object",
+                "properties": {
+                    "targetName": {
+                        "type": "string"
+                    },
+                    "outputName": {
+                        "type": "string"
+                    }
+                },
+                "required": ["targetName", "outputName"]
+            }
+        },
+        "stackSuffix": {
+            "type": "string"
+        },
+        "parameterOverrides": {
+            "description": "Map of parameter overrides",
+            "type": "object",
+            "additionalProperties": {
+                "type": "string"
+            }
+        }
     },
-    "stackSuffix": {
-      "type": "string"
-    },
-    "parameterOverrides": {
-      "description": "Map of parameter overrides",
-      "type": "object",
-      "additionalProperties": {
-        "type": "string"
-      }
-    }
-  },
-  "required": [
-    "s3Bucket",
-    "templateFile"
-  ],
-  "definitions": {}
+    "required": ["s3Bucket", "templateFile"],
+    "definitions": {}
 }

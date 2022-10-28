@@ -1,4 +1,6 @@
-module.exports = {
+/* eslint-disable */
+/* eslint-disable */
+export default {
     preset: '../../jest.preset.js',
     globals: {
         'ts-jest': {
@@ -9,7 +11,7 @@ module.exports = {
         '^.+\\.[tj]sx?$': 'ts-jest',
     },
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
-    coverageDirectory: '../../coverage/packages/s3',
-    displayName: 's3',
+    coverageDirectory: '../../coverage/packages/core',
+    displayName: 'core',
     testEnvironment: 'node',
 };

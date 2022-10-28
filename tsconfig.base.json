@@ -24,7 +24,8 @@
         "paths": {
             "@nx-aws/core": ["packages/core/src/index.ts"],
             "@nx-aws/s3": ["packages/s3/src/index.ts"],
-            "@nx-aws/sam": ["packages/sam/src/index.ts"]
+            "@nx-aws/sam": ["packages/sam/src/index.ts"],
+            "@nx-aws/test": ["packages/test/src/index.ts"]
         }
     },
     "exclude": ["node_modules", "tmp"]

@@ -41,17 +41,15 @@ export function nodeExecuteBuilderHandler(
     const project = context.target?.project;
     return loadEnvFromStack(options.mimicEnv, project).pipe(
         switchMap(() => runWaitUntilTargets(options)),
-        concatMap(
-            (v): Observable<BuilderOutput> => {
-                if (!v.success) {
-                    context.logger.error(
-                        `One of the tasks specified in waitUntilTargets failed`
-                    );
-                    return of({ success: false });
-                }
-                return startBuild(options, context);
+        concatMap((v): Observable<BuilderOutput> => {
+            if (!v.success) {
+                context.logger.error(
+                    `One of the tasks specified in waitUntilTargets failed`
+                );
+                return of({ success: false });
             }
-        )
+            return startBuild(options, context);
+        })
     );
 }
 
@@ -61,42 +59,38 @@ function startBuild(
 ): Observable<BuilderOutput> {
     const buildTarget = targetFromTargetString(options.buildTarget);
     return getBuilderOptions(options, context).pipe(
-        concatMap(
-            (builderOptions): Observable<BuilderOutput> => {
-                const template = builderOptions.template;
-                if (typeof template !== 'string') {
-                    throw new Error(
-                        'Builder options was missing template property'
-                    );
-                }
-                return copyTemplate(options, context, template).pipe(
-                    switchMap((finalTemplateLocation) =>
-                        from(
-                            getParameterOverrides(
-                                { ...options, templateFile: template },
-                                context,
-                                undefined
-                            )
-                        ).pipe(
-                            map((parameterOverrides) => ({
-                                finalTemplateLocation,
-                                parameterOverrides,
-                            }))
-                        )
-                    ),
-                    switchMap(
-                        ({ finalTemplateLocation, parameterOverrides }) => {
-                            return startBuildImpl(
-                                { ...options, parameterOverrides },
-                                context,
-                                finalTemplateLocation,
-                                buildTarget
-                            );
-                        }
-                    )
+        concatMap((builderOptions): Observable<BuilderOutput> => {
+            const template = builderOptions.template;
+            if (typeof template !== 'string') {
+                throw new Error(
+                    'Builder options was missing template property'
                 );
             }
-        )
+            return copyTemplate(options, context, template).pipe(
+                switchMap((finalTemplateLocation) =>
+                    from(
+                        getParameterOverrides(
+                            { ...options, templateFile: template },
+                            context,
+                            undefined
+                        )
+                    ).pipe(
+                        map((parameterOverrides) => ({
+                            finalTemplateLocation,
+                            parameterOverrides,
+                        }))
+                    )
+                ),
+                switchMap(({ finalTemplateLocation, parameterOverrides }) => {
+                    return startBuildImpl(
+                        { ...options, parameterOverrides },
+                        context,
+                        finalTemplateLocation,
+                        buildTarget
+                    );
+                })
+            );
+        })
     );
 }
 
@@ -112,17 +106,15 @@ function startBuildImpl(
         watch: true,
     });
     return combineLatest([sam$, build$]).pipe(
-        map(
-            ([samResult, buildResult]): BuilderOutput => {
-                if (!samResult.success || !buildResult.success) {
-                    context.logger.error(
-                        'There was an error with the build. See above.'
-                    );
-                    return { success: false };
-                }
-                return { success: true };
+        map(([samResult, buildResult]): BuilderOutput => {
+            if (!samResult.success || !buildResult.success) {
+                context.logger.error(
+                    'There was an error with the build. See above.'
+                );
+                return { success: false };
             }
-        )
+            return { success: true };
+        })
     );
 }
 

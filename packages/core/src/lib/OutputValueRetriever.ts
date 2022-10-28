@@ -117,11 +117,8 @@ export class OutputValueRetriever {
         context: BuilderContext,
         currentStackSuffix: string | undefined
     ) {
-        const [
-            sourceProjectName,
-            sourceTargetName,
-            explicitConfig,
-        ] = targetName.split(':');
+        const [sourceProjectName, sourceTargetName, explicitConfig] =
+            targetName.split(':');
 
         assert(
             sourceProjectName && sourceTargetName,

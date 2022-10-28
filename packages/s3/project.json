@@ -1,0 +1,86 @@
+{
+    "sourceRoot": "packages/s3/src",
+    "projectType": "library",
+    "generators": {},
+    "targets": {
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "options": {
+                "lintFilePatterns": [
+                    "packages/s3/**/*.ts",
+                    "packages/s3/**/*.spec.ts",
+                    "packages/s3/**/*.spec.tsx",
+                    "packages/s3/**/*.spec.js",
+                    "packages/s3/**/*.spec.jsx",
+                    "packages/s3/**/*.d.ts"
+                ]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "options": {
+                "jestConfig": "packages/s3/jest.config.ts",
+                "passWithNoTests": true
+            },
+            "outputs": ["coverage/packages/s3"]
+        },
+        "build": {
+            "executor": "@nrwl/js:tsc",
+            "options": {
+                "outputPath": "dist/packages/s3",
+                "tsConfig": "packages/s3/tsconfig.lib.json",
+                "packageJson": "packages/s3/package.json",
+                "main": "packages/s3/src/index.ts",
+                "assets": [
+                    "packages/s3/*.md",
+                    {
+                        "input": "./packages/s3/src",
+                        "glob": "**/*.!(ts)",
+                        "output": "./src"
+                    },
+                    {
+                        "input": "./packages/s3",
+                        "glob": "collection.json",
+                        "output": "."
+                    },
+                    {
+                        "input": "./packages/s3",
+                        "glob": "builders.json",
+                        "output": "."
+                    }
+                ],
+                "srcRootForCompilationRoot": "packages/s3"
+            },
+            "outputs": ["{options.outputPath}"]
+        },
+        "publish": {
+            "executor": "@nrwl/workspace:run-commands",
+            "options": {
+                "parallel": false,
+                "commands": [
+                    {
+                        "command": "npx monorepo-package-tool --rootModuleDir packages/s3 --destDir dist/packages/s3"
+                    },
+                    {
+                        "command": "npm publish dist/packages/s3 --access public --tag $NPM_TAG"
+                    }
+                ]
+            }
+        },
+        "pack": {
+            "executor": "@nrwl/workspace:run-commands",
+            "options": {
+                "parallel": false,
+                "commands": [
+                    {
+                        "command": "npx monorepo-package-tool --rootModuleDir packages/s3 --destDir dist/packages/s3"
+                    },
+                    {
+                        "command": "npm pack dist/packages/s3"
+                    }
+                ]
+            }
+        }
+    },
+    "tags": []
+}

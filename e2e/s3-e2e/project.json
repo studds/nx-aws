@@ -1,0 +1,17 @@
+{
+    "projectType": "application",
+    "sourceRoot": "e2e/s3-e2e/src",
+    "targets": {
+        "e2e": {
+            "executor": "@nrwl/nx-plugin:e2e",
+            "options": {
+                "target": "s3:build",
+                "npmPackageName": "@nx-aws/s3",
+                "pluginOutputPath": "dist/packages/s3",
+                "jestConfig": "e2e/s3-e2e/jest.config.js"
+            }
+        }
+    },
+    "tags": [],
+    "implicitDependencies": ["s3"]
+}

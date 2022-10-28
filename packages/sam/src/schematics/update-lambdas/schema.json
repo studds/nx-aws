@@ -1,20 +1,18 @@
 {
-  "$schema": "http://json-schema.org/schema",
-  "id": "UpdateLambdas",
-  "title": "",
-  "type": "object",
-  "properties": {
-    "projectName": {
-      "type": "string",
-      "description": "",
-      "$default": {
-        "$source": "argv",
-        "index": 0
-      },
-      "x-prompt": "Which project should we update lambdas for?"
-    }
-  },
-  "required": [
-    "projectName"
-  ]
+    "$schema": "http://json-schema.org/schema",
+    "id": "UpdateLambdas",
+    "title": "",
+    "type": "object",
+    "properties": {
+        "projectName": {
+            "type": "string",
+            "description": "",
+            "$default": {
+                "$source": "argv",
+                "index": 0
+            },
+            "x-prompt": "Which project should we update lambdas for?"
+        }
+    },
+    "required": ["projectName"]
 }

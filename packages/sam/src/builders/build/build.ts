@@ -7,8 +7,8 @@ import { Entry } from 'webpack';
 import { loadCloudFormationTemplate } from '../../utils/load-cloud-formation-template';
 import { assert } from 'ts-essentials';
 import { BuildNodeBuilderOptions } from '@nrwl/node/src/utils/types';
-import { buildExecutor } from '@nrwl/node/src/executors/build/build.impl';
-import { ExecutorContext } from '@nrwl/tao/src/shared/workspace';
+import { webpackExecutor } from '@nrwl/node/src/executors/webpack/webpack.impl';
+import { ExecutorContext } from '@nrwl/devkit';
 
 export interface ExtendedBuildBuilderOptions extends BuildNodeBuilderOptions {
     originalWebpackConfig?: string;
@@ -67,7 +67,7 @@ export async function* cfBuilder(
     // dirty, but gives us more control for very little cost :-)
     options.entry = combinedEntry;
     // kick off the build itself;
-    return yield* buildExecutor(options, context);
+    return yield* webpackExecutor(options, context);
 }
 
 /**

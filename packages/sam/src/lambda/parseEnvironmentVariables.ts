@@ -111,9 +111,8 @@ type CoreLambdaEnvironmentVariables = ReserverLambdaEnvironmentVariables &
 type RequiredEnvVariableName = RequiredKeys<CoreLambdaEnvironmentVariables>;
 type OptionalEnvVariableName = OptionalKeys<CoreLambdaEnvironmentVariables>;
 
-export type LambdaEnvironmentVariables<
-    EV extends string
-> = CoreLambdaEnvironmentVariables & { [key in EV]: string };
+export type LambdaEnvironmentVariables<EV extends string> =
+    CoreLambdaEnvironmentVariables & { [key in EV]: string };
 
 const requiredEnvVariables = getRequiredKeys();
 const optionalEnvVariables = getOptionalKeys();
