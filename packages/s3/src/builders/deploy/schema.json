@@ -1,4 +1,6 @@
 {
+    "version": 2,
+    "outputCapture": "direct-nodejs",
     "title": "Schema for deploying static sites to AWS s3",
     "description": "AWS S3 deploy options",
     "type": "object",

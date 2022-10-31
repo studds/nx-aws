@@ -1,7 +1,7 @@
 import Resource from 'cloudform-types/types/resource';
 import { resolve, relative } from 'path';
 import { ExtendedBuildBuilderOptions } from './build';
-import { Entry } from 'webpack';
+import { EntryObject } from 'webpack';
 import { getLambdaSourcePath } from '../../utils/getLambdaSourcePath';
 import {
     Globals,
@@ -14,7 +14,7 @@ import {
 export function getEntriesFromCloudFormation(
     options: ExtendedBuildBuilderOptions,
     cf: ParsedSamTemplate
-): Array<Entry> {
+): Array<EntryObject> {
     const globals = cf.Globals;
     const resources = cf.Resources;
     if (!resources) {
@@ -24,7 +24,7 @@ export function getEntriesFromCloudFormation(
         .map((name) => {
             return getEntry(name, resources[name], options, globals);
         })
-        .filter((s): s is Entry => !!s);
+        .filter((s): s is EntryObject => !!s);
 }
 
 function getEntry(
@@ -32,7 +32,7 @@ function getEntry(
     resource: Resource,
     options: ExtendedBuildBuilderOptions,
     globalProperties?: Globals
-): Entry | undefined {
+): EntryObject | undefined {
     const properties = resource.Properties;
     if (!properties) {
         return;

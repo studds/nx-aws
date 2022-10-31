@@ -1,4 +1,6 @@
 {
+    "version": 2,
+    "outputCapture": "direct-nodejs",
     "title": "Schema for Executing NodeJS apps",
     "description": "NodeJS execution options",
     "type": "object",

@@ -3,7 +3,6 @@ import {
     addDepsToPackageJson,
     addPackageWithInit,
     formatFiles,
-    setDefaultCollection,
     updateJsonInTree,
 } from '@nrwl/workspace';
 import { Schema } from './schema';
@@ -25,7 +24,6 @@ function moveDependency(): Rule {
 
 export default function (schema: Schema): Rule {
     return chain([
-        setDefaultCollection('@nx-aws/sam'),
         addPackageWithInit('@nrwl/node', schema),
         schema.unitTestRunner === 'jest'
             ? addPackageWithInit('@nrwl/jest')

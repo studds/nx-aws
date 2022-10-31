@@ -1,4 +1,6 @@
 {
+    "version": 2,
+    "outputCapture": "direct-nodejs",
     "title": "Node Application Build Target",
     "description": "Node application build target options for Build Facade",
     "type": "object",
@@ -130,7 +132,6 @@
         }
     },
     "required": ["tsConfig", "template"],
-
     "definitions": {
         "assetPattern": {
             "oneOf": [

@@ -1,4 +1,6 @@
 {
+    "version": 2,
+    "outputCapture": "direct-nodejs",
     "title": "SAM Application Package Target",
     "description": "Packages the SAM Application using the AWS CLI",
     "type": "object",

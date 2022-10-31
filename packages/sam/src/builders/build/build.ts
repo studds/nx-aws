@@ -3,17 +3,17 @@ import { JsonObject } from '@angular-devkit/core';
 import { of } from 'rxjs';
 import { resolve } from 'path';
 import { getEntriesFromCloudFormation } from './get-entries-from-cloudformation';
-import { Entry } from 'webpack';
+import { EntryObject } from 'webpack';
 import { loadCloudFormationTemplate } from '../../utils/load-cloud-formation-template';
 import { assert } from 'ts-essentials';
-import { BuildNodeBuilderOptions } from '@nrwl/node/src/utils/types';
+import { WebpackExecutorOptions } from '@nrwl/webpack/src/executors/webpack/schema';
 import { webpackExecutor } from '@nrwl/node/src/executors/webpack/webpack.impl';
 import { ExecutorContext } from '@nrwl/devkit';
 
-export interface ExtendedBuildBuilderOptions extends BuildNodeBuilderOptions {
+export interface ExtendedBuildBuilderOptions extends WebpackExecutorOptions {
     originalWebpackConfig?: string;
     template: string;
-    entry: string | Entry;
+    entry: string | EntryObject;
     buildPerFunction?: boolean;
 }
 export default cfBuilder;
@@ -49,7 +49,7 @@ export async function* cfBuilder(
     );
 
     // in watch mode, we only want a single build for everything.
-    const combinedEntry: Entry = {};
+    const combinedEntry: EntryObject = {};
     entriesPerFn.forEach((entry) => {
         Object.keys(entry).forEach((key) => {
             combinedEntry[key] = entry[key];
@@ -80,14 +80,8 @@ function addOurCustomWebpackConfig(
     options: ExtendedBuildBuilderOptions & JsonObject
 ) {
     const webpackConfigPath = resolve(__dirname, 'config.js');
-    if (options.webpackConfig) {
-        const webpackConfig = Array.isArray(options.webpackConfig)
-            ? options.webpackConfig
-            : [options.webpackConfig];
-        options.webpackConfig = [...webpackConfig, webpackConfigPath];
-    } else {
-        options.webpackConfig = [webpackConfigPath];
-    }
+    options.originalWebpackConfig = options.webpackConfig;
+    options.webpackConfig = webpackConfigPath;
 }
 
 /**

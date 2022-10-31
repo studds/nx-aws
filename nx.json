@@ -3,23 +3,13 @@
     "affected": {
         "defaultBase": "master"
     },
-    "implicitDependencies": {
-        "workspace.json": "*",
-        "package.json": {
-            "dependencies": "*",
-            "devDependencies": "*"
-        },
-        "tsconfig.base.json": "*",
-        "tslint.json": "*",
-        "nx.json": "*",
-        ".eslintrc.json": "*"
-    },
     "tasksRunnerOptions": {
         "default": {
-            "runner": "nx/tasks-runners/default",
+            "runner": "@nrwl/nx-cloud",
             "options": {
                 "cacheableOperations": ["build", "lint", "test", "e2e"],
-                "parallel": 3
+                "parallel": 3,
+                "accessToken": "YTJhMWY1ODQtNjZkYi00ODY3LWJkZDYtMWFlZGQwNzUxNmY2fHJlYWQtd3JpdGU="
             }
         }
     },
@@ -27,15 +17,21 @@
         "appsDir": "e2e",
         "libsDir": "packages"
     },
-    "targetDependencies": {
-        "build": [
-            {
-                "target": "build",
-                "projects": "dependencies"
-            }
-        ]
+    "targetDefaults": {
+        "build": {
+            "dependsOn": ["^build"],
+            "inputs": ["production", "^production"]
+        }
     },
-    "cli": {
-        "defaultCollection": "@nrwl/workspace"
+    "$schema": "./node_modules/nx/schemas/nx-schema.json",
+    "namedInputs": {
+        "default": ["{projectRoot}/**/*", "sharedGlobals"],
+        "sharedGlobals": [
+            "{workspaceRoot}/workspace.json",
+            "{workspaceRoot}/tsconfig.base.json",
+            "{workspaceRoot}/tslint.json",
+            "{workspaceRoot}/nx.json"
+        ],
+        "production": ["default"]
     }
 }

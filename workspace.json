@@ -7,5 +7,6 @@
         "sam": "packages/sam",
         "sam-e2e": "e2e/sam-e2e",
         "workspace": "."
-    }
+    },
+    "$schema": "./node_modules/nx/schemas/workspace-schema.json"
 }

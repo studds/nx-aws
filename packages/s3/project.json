@@ -1,4 +1,5 @@
 {
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
     "sourceRoot": "packages/s3/src",
     "projectType": "library",
     "generators": {},
@@ -22,7 +23,7 @@
                 "jestConfig": "packages/s3/jest.config.ts",
                 "passWithNoTests": true
             },
-            "outputs": ["coverage/packages/s3"]
+            "outputs": ["{workspaceRoot}/coverage/packages/s3"]
         },
         "build": {
             "executor": "@nrwl/js:tsc",
@@ -54,7 +55,7 @@
             "outputs": ["{options.outputPath}"]
         },
         "publish": {
-            "executor": "@nrwl/workspace:run-commands",
+            "executor": "nx:run-commands",
             "options": {
                 "parallel": false,
                 "commands": [
@@ -68,7 +69,7 @@
             }
         },
         "pack": {
-            "executor": "@nrwl/workspace:run-commands",
+            "executor": "nx:run-commands",
             "options": {
                 "parallel": false,
                 "commands": [

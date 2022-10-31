@@ -4,7 +4,7 @@ import { getValidatedOptions } from './getValidatedOptions';
 import { BuilderContext } from '@angular-devkit/architect';
 import { ImportStackOutputs } from './ImportStackOutputs';
 import { JsonObject } from '@angular-devkit/core';
-import { assert } from 'console';
+import { assert } from 'ts-essentials/dist/functions';
 
 // force AWS SDK to load config, in case region is set there
 process.env.AWS_SDK_LOAD_CONFIG = '1';
