@@ -57,7 +57,7 @@ export async function* cfBuilder(
     });
 
     // we customise the build itself by passing a webpack config customising function to nrwl's builder
-    addOurCustomWebpackConfig(options);
+    addOurCustomWebpackConfig(options, context);
 
     // and now... to run the build
 
@@ -77,10 +77,16 @@ export async function* cfBuilder(
  *
  */
 function addOurCustomWebpackConfig(
-    options: ExtendedBuildBuilderOptions & JsonObject
+    options: ExtendedBuildBuilderOptions & JsonObject,
+    context: ExecutorContext
 ) {
     const webpackConfigPath = resolve(__dirname, 'config.js');
-    options.originalWebpackConfig = options.webpackConfig;
+    if (options.webpackConfig) {
+        options.originalWebpackConfig = resolve(
+            context.root,
+            options.webpackConfig
+        );
+    }
     options.webpackConfig = webpackConfigPath;
 }
 
