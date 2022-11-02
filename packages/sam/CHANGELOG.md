@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.14.1](https://github.com/studds/nx-aws/compare/v0.14.0...v0.14.1) (2022-11-02)
+
+
+### Bug Fixes
+
+* resolve webpack config path ([f940a78](https://github.com/studds/nx-aws/commit/f940a78cee2d9c50ad1bf1f4e4dd6a0a8052fb03))
+
+
+
 # [0.14.0](https://github.com/studds/nx-aws/compare/v0.13.0...v0.14.0) (2022-10-31)
 
 
