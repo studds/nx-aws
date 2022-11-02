@@ -1,17 +1,21 @@
-import { CloudFormation } from 'aws-sdk';
 import { formatStackName } from './formatStackName';
 import { getValidatedOptions } from './getValidatedOptions';
 import { BuilderContext } from '@angular-devkit/architect';
 import { ImportStackOutputs } from './ImportStackOutputs';
 import { JsonObject } from '@angular-devkit/core';
 import { assert } from 'ts-essentials/dist/functions';
+import {
+    CloudFormationClient,
+    DescribeStacksCommand,
+    Output,
+} from '@aws-sdk/client-cloudformation';
 
 // force AWS SDK to load config, in case region is set there
 process.env.AWS_SDK_LOAD_CONFIG = '1';
 
 export class OutputValueRetriever {
-    private cfCache: Record<string, CloudFormation> = {};
-    private outputCache: Record<string, CloudFormation.Outputs> = {};
+    private cfCache: Record<string, CloudFormationClient> = {};
+    private outputCache: Record<string, Output[]> = {};
     private optionsByTarget: Record<string, JsonObject> = {};
 
     async getOutputValues(
@@ -80,9 +84,9 @@ export class OutputValueRetriever {
         }
         context.logger.info(`Retrieving outputs for ${otherStackName}...`);
         const cloudFormation = await this.getCfForProject(targetName, context);
-        const describeStacksResult = await cloudFormation
-            .describeStacks({ StackName: otherStackName })
-            .promise();
+        const describeStacksResult = await cloudFormation.send(
+            new DescribeStacksCommand({ StackName: otherStackName })
+        );
         const stacks = describeStacksResult.Stacks;
         if (!stacks) {
             throw new Error(
@@ -174,7 +178,7 @@ export class OutputValueRetriever {
     private getCfForRegion(region: string | undefined) {
         const key = region || '';
         if (!this.cfCache[key]) {
-            this.cfCache[key] = new CloudFormation({ region });
+            this.cfCache[key] = new CloudFormationClient({ region });
         }
         return this.cfCache[key];
     }
