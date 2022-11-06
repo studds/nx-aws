@@ -1,7 +1,7 @@
 import { JsonObject } from '@angular-devkit/core';
 
 import { of } from 'rxjs';
-import { resolve } from 'path';
+import { join, resolve } from 'path';
 import { getEntriesFromCloudFormation } from './get-entries-from-cloudformation';
 import { EntryObject } from 'webpack';
 import { loadCloudFormationTemplate } from '../../utils/load-cloud-formation-template';
@@ -9,6 +9,9 @@ import { assert } from 'ts-essentials';
 import { WebpackExecutorOptions } from '@nrwl/webpack/src/executors/webpack/schema';
 import { webpackExecutor } from '@nrwl/node/src/executors/webpack/webpack.impl';
 import { ExecutorContext } from '@nrwl/devkit';
+import { installNpmModules } from './installNpmModules';
+import { createPackageJson as generatePackageJson } from '@nrwl/workspace/src/utilities/create-package-json';
+import { writeFileSync } from 'fs';
 
 export interface ExtendedBuildBuilderOptions extends WebpackExecutorOptions {
     originalWebpackConfig?: string;
@@ -67,7 +70,28 @@ export async function* cfBuilder(
     // dirty, but gives us more control for very little cost :-)
     options.entry = combinedEntry;
     // kick off the build itself;
-    return yield* webpackExecutor(options, context);
+
+    yield* webpackExecutor(options, context);
+
+    if (options.generatePackageJson) {
+        assert(context.projectName, `Missing project name from target`);
+        assert(context.projectGraph, `Missing project graph from target`);
+        const packageJson = generatePackageJson(
+            context.projectName,
+            context.projectGraph,
+            {
+                root: context.root,
+                projectRoot:
+                    context.workspace.projects[context.projectName].sourceRoot,
+            }
+        );
+        writeFileSync(
+            join(options.outputPath, 'package.json'),
+            JSON.stringify(packageJson, null, 4),
+            { encoding: 'utf-8' }
+        );
+        installNpmModules(options);
+    }
 }
 
 /**
