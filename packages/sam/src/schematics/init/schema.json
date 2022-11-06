@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/schema",
-    "id": "NxNestInit",
+    "$id": "NxAwsSamInit",
     "title": "Add Nx Nest Schematics",
     "type": "object",
     "properties": {
