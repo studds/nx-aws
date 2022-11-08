@@ -61,9 +61,6 @@
                 "parallel": false,
                 "commands": [
                     {
-                        "command": "npx monorepo-package-tool --rootModuleDir packages/s3 --destDir dist/packages/s3"
-                    },
-                    {
                         "command": "npm publish dist/packages/s3 --access public --tag $NPM_TAG"
                     }
                 ]
@@ -74,9 +71,6 @@
             "options": {
                 "parallel": false,
                 "commands": [
-                    {
-                        "command": "npx monorepo-package-tool --rootModuleDir packages/s3 --destDir dist/packages/s3"
-                    },
                     {
                         "command": "npm pack dist/packages/s3"
                     }

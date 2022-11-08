@@ -61,9 +61,6 @@
                 "parallel": false,
                 "commands": [
                     {
-                        "command": "npx monorepo-package-tool --rootModuleDir packages/sam --destDir dist/packages/sam"
-                    },
-                    {
                         "command": "npm publish dist/packages/sam --access public --tag $NPM_TAG"
                     }
                 ]
@@ -74,9 +71,6 @@
             "options": {
                 "parallel": false,
                 "commands": [
-                    {
-                        "command": "npx monorepo-package-tool --rootModuleDir packages/sam --destDir dist/packages/sam"
-                    },
                     {
                         "command": "npm pack dist/packages/sam"
                     }

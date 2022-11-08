@@ -7,20 +7,6 @@
             "options": {
                 "syncVersions": true
             }
-        },
-        "build": {
-            "executor": "nx:run-commands",
-            "options": {
-                "parallel": false,
-                "commands": [
-                    {
-                        "command": "npx monorepo-package-tool --rootModuleDir packages/core --destDir dist/packages/core"
-                    },
-                    {
-                        "command": "npm publish dist/packages/core --access public --tag $NPM_TAG"
-                    }
-                ]
-            }
         }
     },
     "tags": []
