@@ -1,5 +1,4 @@
 import { UnitTestRunner } from '../../utils/test-runners';
-import { Linter } from 'tslint';
 
 export interface Schema {
     name: string;
@@ -8,6 +7,6 @@ export interface Schema {
     directory?: string;
     unitTestRunner: UnitTestRunner;
     tags?: string;
-    linter: Linter;
+    linter: 'eslint' | 'tslint';
     frontendProject?: string;
 }

@@ -1,6 +1,5 @@
 import { JsonObject } from '@angular-devkit/core';
 
-import { of } from 'rxjs';
 import { join, resolve } from 'path';
 import { getEntriesFromCloudFormation } from './get-entries-from-cloudformation';
 import { EntryObject } from 'webpack';
@@ -43,7 +42,8 @@ export async function* cfBuilder(
 
     if (entriesPerFn.length === 0) {
         console.log(`Didn't find anything to build in CloudFormation template`);
-        return of({ emittedFiles: [], success: true });
+        yield { emittedFiles: [], success: true };
+        return;
     }
 
     assert(
@@ -85,6 +85,14 @@ export async function* cfBuilder(
                     context.workspace.projects[context.projectName].sourceRoot,
             }
         );
+        const externalDependencies = options.externalDependencies;
+        if (Array.isArray(externalDependencies)) {
+            Object.keys(packageJson.dependencies).forEach((key) => {
+                if (!externalDependencies.includes(key)) {
+                    delete packageJson.dependencies[key];
+                }
+            });
+        }
         writeFileSync(
             join(options.outputPath, 'package.json'),
             JSON.stringify(packageJson, null, 4),
