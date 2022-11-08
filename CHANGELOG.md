@@ -2,6 +2,22 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+# [0.15.0](https://github.com/studds/nx-aws/compare/v0.14.1...v0.15.0) (2022-11-08)
+
+
+### Bug Fixes
+
+* restore generate after v14 upgrade ([06d99a9](https://github.com/studds/nx-aws/commit/06d99a9b36b0201b80ddf75e8742357b963779ef))
+* restore installNpmModules ([95f2b10](https://github.com/studds/nx-aws/commit/95f2b10b412f09ba7a2667f2ffb02a92b7aef70e))
+
+
+### Features
+
+* adding experimental layer executor ([d44b39c](https://github.com/studds/nx-aws/commit/d44b39cd79da9d3341fc3fe93f0ecbe56452f28e))
+* **sam:** webpack build: remove non-external deps from generated package.json ([5e8f653](https://github.com/studds/nx-aws/commit/5e8f65362db099f7be77170af26fe9fcb822684a))
+
+
+
 ## [0.14.1](https://github.com/studds/nx-aws/compare/v0.14.0...v0.14.1) (2022-11-02)
 
 

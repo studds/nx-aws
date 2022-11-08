@@ -1,6 +1,6 @@
 {
     "name": "@nx-aws/s3",
-    "version": "0.14.1",
+    "version": "0.15.0",
     "description": "AWS S3 plugin for nx - for deploying static resources to S3",
     "keywords": [
         "AWS",
