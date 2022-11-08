@@ -76,6 +76,33 @@ The builder will run a webpack build for `src/my-function/handler-file`.
 
 ### Lambda Layers
 
+#### Building lambda layers - experimental
+
+There's an experimental builder added for lambda layers, `@nx-aws/sam:layer`. It wraps the [tsc executor](https://nx.dev/packages/js/executors/tsc#@nrwl/js:tsc),
+with all the same options.
+
+After the tsc executor has run, it creates a package.json file, runs `npm install` with appropriate flags for AWS Lambda, and then zips the result. You can then deploy this
+using the `package` and `deploy` executors.
+
+This is the resource you'll need in your `template.yaml`:
+
+```yaml
+AirmailLayer:
+    Type: AWS::Serverless::LayerVersion
+    Description: Airmail layer
+    Properties:
+        ContentUri: ./nodejs.zip
+        CompatibleRuntimes:
+            - nodejs14.x
+            - nodejs16.x
+```
+
+**Note:** At the moment, the ContentUri ./nodejs.zip is essentially hard-coded. The assumption is, essentially, that the layer is the only resource in this template.
+
+My preferred way to use the layer is via the `importStackOutputs` on another stack.
+
+#### Using lambda layers in functions
+
 Lambda layers defined in your template should Just Work - however, the way sam-cli treats layers is broken,
 so they won't: https://github.com/aws/aws-sam-cli/issues/2222.
 
