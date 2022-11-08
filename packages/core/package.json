@@ -13,5 +13,10 @@
     "version": "0.15.0",
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"
+    },
+    "dependencies": {
+        "rxjs": "~6.6.0",
+        "ts-essentials": "~9.3.0",
+        "@aws-sdk/client-cloudformation": "^3.200.0"
     }
 }

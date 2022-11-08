@@ -5,7 +5,20 @@
     "schematics": "./collection.json",
     "builders": "./builders.json",
     "dependencies": {
-        "@nrwl/node": "*"
+        "ts-essentials": "~9.3.0",
+        "webpack-merge": "^5.8.0",
+        "terser-webpack-plugin": "5.3.6",
+        "cloudform-types": "~7.3.0",
+        "source-map-support": "^0.5.13",
+        "@nx-aws/core": "0.15.0",
+        "rxjs": "~6.6.0",
+        "@aws-sdk/client-cloudformation": "^3.200.0",
+        "mkdirp": "~1.0.4",
+        "cross-spawn": "~6.0.5",
+        "cross-zip": "~4.0.0",
+        "js-yaml": "~4.1.0",
+        "cloudformation-js-yaml-schema": "~0.4.2",
+        "@aws-sdk/client-lambda": "^3.200.0"
     },
     "publishConfig": {
         "registry": "https://registry.npmjs.org/"
