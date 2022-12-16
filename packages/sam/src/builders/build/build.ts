@@ -9,7 +9,7 @@ import { WebpackExecutorOptions } from '@nrwl/webpack/src/executors/webpack/sche
 import { webpackExecutor } from '@nrwl/node/src/executors/webpack/webpack.impl';
 import { ExecutorContext } from '@nrwl/devkit';
 import { installNpmModules } from './installNpmModules';
-import { createPackageJson as generatePackageJson } from '@nrwl/workspace/src/utilities/create-package-json';
+import { createPackageJson as generatePackageJson } from 'nx/src/utils/create-package-json';
 import { writeFileSync } from 'fs';
 
 export interface ExtendedBuildBuilderOptions extends WebpackExecutorOptions {
