@@ -3,7 +3,7 @@ import { tscExecutor } from '@nrwl/js/src/executors/tsc/tsc.impl';
 import { ExecutorContext } from '@nrwl/devkit';
 import { basename, join } from 'path';
 import { installNpmModules } from '../../builders/build/installNpmModules';
-import { createPackageJson } from '@nrwl/workspace/src/utilities/create-package-json';
+import { createPackageJson } from 'nx/src/utils/create-package-json';
 import { TypescriptCompilationResult } from '@nrwl/js/src/utils/typescript/compile-typescript-files';
 import { assert } from 'ts-essentials/dist/functions';
 import { writeFileSync } from 'fs';
@@ -20,8 +20,6 @@ export default async function* runExecutor(
     options.outputPath = join(options.outputPath, 'nodejs');
 
     assert(context.projectName, `Missing project name from context`);
-    const { sourceRoot } = context.workspace.projects[context.projectName];
-    assert(sourceRoot, `Missing sourceRoot from ${context.projectName}`);
 
     // build with typescript
     const tsc = tscExecutor(options, context);
@@ -50,7 +48,6 @@ export default async function* runExecutor(
             context.projectGraph,
             {
                 root: context.root,
-                projectRoot: sourceRoot,
             }
         );
         writeFileSync(
