@@ -2,6 +2,15 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.15.2](https://github.com/studds/nx-aws/compare/v0.15.1...v0.15.2) (2023-01-18)
+
+
+### Bug Fixes
+
+* changing path for nx utils under v15 ([6fb21da](https://github.com/studds/nx-aws/commit/6fb21dac88c3e6b9eecdfab72c042fab9858a3ad))
+
+
+
 ## [0.15.1](https://github.com/studds/nx-aws/compare/v0.15.0...v0.15.1) (2022-11-08)
 
 

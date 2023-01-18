@@ -2,6 +2,10 @@
 
 This file was generated using [@jscutlery/semver](https://github.com/jscutlery/semver).
 
+## [0.15.2](https://github.com/studds/nx-aws/compare/v0.15.1...v0.15.2) (2023-01-18)
+
+
+
 ## [0.15.1](https://github.com/studds/nx-aws/compare/v0.15.0...v0.15.1) (2022-11-08)
 
 
