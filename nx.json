@@ -21,6 +21,10 @@
         "build": {
             "dependsOn": ["^build"],
             "inputs": ["production", "^production"]
+        },
+        "publish": {
+            "dependsOn": ["build"],
+            "inputs": ["production", "^production"]
         }
     },
     "$schema": "./node_modules/nx/schemas/nx-schema.json",
