@@ -4,6 +4,8 @@
     "main": "src/index.js",
     "schematics": "./collection.json",
     "builders": "./builders.json",
+    "repository": "https://github.com/studds/nx-aws/",
+    "website": "https://github.com/studds/nx-aws/edit/main/packages/sam/",
     "dependencies": {
         "ts-essentials": "~9.3.0",
         "webpack-merge": "^5.8.0",
