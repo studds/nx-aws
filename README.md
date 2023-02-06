@@ -23,6 +23,8 @@ This project includes builders for that!
 1. Open your existing workspace or run `npx create-nx-workspace` to create a new workspace
 1. `npm install @nx-aws/sam` or `yarn add @nx-aws/sam`
 1. `nx g @nx-aws/sam:app api [--frontendProject sample]`
+1. Create a bucket in AWS to store deploy artifacts (via the [console](https://console.aws.amazon.com) or [AWS CLI](https://docs.aws.amazon.com/cli/latest/reference/s3api/create-bucket.html) using `aws s3api create-bucket --bucket ${my-nx-deploy-artifacts} --region us-east-1`) 
+1. Update your `workspace.json` or `angular.json` to include the key `s3Bucket` under both the `package` and `deploy` targets (see details below).
 
 ## @nx-aws/sam:build
 
@@ -154,6 +156,8 @@ Add the following to your `angular.json`:
 }
 ```
 
+**NB: sam:package requires an S3 bucket to store deploy artefacts - you need to create a bucket and add the `s3Bucket` option to your project configuration**
+
 For the most part, this simply wraps the `aws cloudformation package` command, but it will also
 rewrite the `Location` property of `AWS::Serverless::Application` resources, if they refer to
 another project.
@@ -213,6 +217,8 @@ Add the following to `angular.json`:
 }
 ```
 
+**NB: sam:deploy requires an S3 bucket to store deploy artefacts - you need to create a bucket and add the `s3Bucket` option to your project configuration - this must be the same as used for sam:package**
+
 This wraps the `aws cloudformation deploy` command. The one nice thing it does is pull
 any parameters defined in your `template.yaml` from environment variables, and pass them
 in as parameter overrides. For example, if you have in your `template.yaml`:
@@ -226,6 +232,17 @@ Parameters:
 
 The the deploy builder will look for an environment variable MY_PARAMETER and pass it in as
 a parameter overrides.
+
+## faq
+
+### How do I resolve the error "Required property 's3Bucket' is missing"?
+
+The SAM package and deploy steps require an s3 bucket to store and retrieve deployment artefacts.
+
+You need to create and s3 bucket to store your deployment artefacts and then include that bucket in your project configuration.
+
+1. Create a bucket in AWS to store deploy artifacts (via the [console](https://console.aws.amazon.com) or [AWS CLI](https://docs.aws.amazon.com/cli/latest/reference/s3api/create-bucket.html) using `aws s3api create-bucket --bucket ${my-nx-deploy-artifacts} --region us-east-1`) 
+1. Update your `workspace.json` or `angular.json` to include the key `s3Bucket` under both the `package` and `deploy` targets (see details above for the package and deploy steps).
 
 ## contributing
 
