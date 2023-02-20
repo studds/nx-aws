@@ -23,7 +23,7 @@ This project includes builders for that!
 1. Open your existing workspace or run `npx create-nx-workspace` to create a new workspace
 1. `npm install @nx-aws/sam` or `yarn add @nx-aws/sam`
 1. `nx g @nx-aws/sam:app api [--frontendProject sample]`
-1. Create a bucket in AWS to store deploy artifacts (via the [console](https://console.aws.amazon.com) or [AWS CLI](https://docs.aws.amazon.com/cli/latest/reference/s3api/create-bucket.html) using `aws s3api create-bucket --bucket ${my-nx-deploy-artifacts} --region us-east-1`) 
+1. Create a bucket in AWS to store deploy artifacts (via the [console](https://console.aws.amazon.com) or [AWS CLI](https://docs.aws.amazon.com/cli/latest/reference/s3api/create-bucket.html) using `aws s3api create-bucket --bucket ${my-nx-deploy-artifacts} --region us-east-1`)
 1. Update your `workspace.json` or `angular.json` to include the key `s3Bucket` under both the `package` and `deploy` targets (see details below).
 
 ## @nx-aws/sam:build
@@ -184,7 +184,7 @@ it will attempt to:
 3. If it finds the `package` target, it will replace `my-sub-stack` with the absolute path to
    the `outputTemplateFile` from that target.
 
-## deploy
+## @nx-aws/sam:deploy
 
 Add the following to `angular.json`:
 
@@ -233,6 +233,95 @@ Parameters:
 The the deploy builder will look for an environment variable MY_PARAMETER and pass it in as
 a parameter overrides.
 
+## @nx-aws/s3:deploy
+
+s3:deploy will deploy compiled files to an s3 bucket and trigger a cache invalidation on a CloudFront distribution.
+
+It is designed to work in concert with a backend project which deploys an s3 bucket and CloudFront distribution (see above). Notably, the "bucket" and "distribution" values will be retrieved from Cloudformation stack outputs from a sam:deploy target.
+
+It uses the `s3 sync` command of the [AWS CLI](https://docs.aws.amazon.com/cli/latest/reference/s3/sync.html) to upload the files.
+
+Add the following to `angular.json`:
+
+```json
+{
+    ...
+    "app": {
+        "root": "apps/app",
+        "sourceRoot": "apps/app/src",
+        "projectType": "application",
+        "schematics": {},
+        "architect": {
+            ...
+           "deploy": {
+                "builder": "@nx-aws/s3:deploy",
+                "options": {
+                    "destPrefix": "public",
+                    "bucket": {
+                        "targetName": "api:deploy",
+                        "outputName": "WebBucket"
+                    },
+                    "distribution": {
+                        "targetName": "api:deploy",
+                        "outputName": "DistributionId"
+                    },
+                    "config": {
+                        "configFileName": "config.json",
+                        "importStackOutputs": {}
+                    }
+                },
+                "configurations": {
+                    "production": {
+                        "stackSuffix": "prod"
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+### Options
+
+-   **bucket** - (Required) An object with `targetName` (referring to a sam:deploy project) and `outputName` (referring to a CloudFormation stack output with the bucket name)
+-   **distribution** - (Required) An object with `targetName` (referring to a sam:deploy project) and `outputName` (referring to a CloudFormation stack output with the distribution id)
+-   **destPrefix** - (Optional) The key prefix used to upload the files to s3. Note that the distribution must be configured with a matching `OriginPath`
+-   **buildTarget** - Target to retrieve outputPath from - by default, will use the build target on the current project
+-   **buildOutputPath** - (Optional) - Explicit path to the built output that will be uploaded to S3 - defaults to outputPath from the build target on the current project
+-   **resources** - (Optional) - An array of objects as described below, which determines which files are sync'd, and the cache control and invalidation settings.
+-   **config** - (Required due to a bug, but can be empty as above): allows deploying a config file with any environment-specific values. This allows a build-once deploy-many workflow, if desired, as opposed to building once for each environment. Outputs from other stacks can be imported using `importStackOutputs`.
+-   **configValues** - (Optional) Map of config values - separate from config to allow easy overrides
+
+### Resources
+
+By default, the following resources are uploaded:
+
+```ts
+[
+    {
+        include: dynamicResources,
+        cacheControl: 'no-cache, stale-while-revalidate=300',
+        invalidate: true,
+    },
+    {
+        include: ['*.js', '*.css', '*.woff'],
+        cacheControl: 'public, max-age=315360000, immutable',
+        invalidate: false,
+    },
+    {
+        include: [],
+        cacheControl: 'public, max-age=86400, stale-while-revalidate=315360000',
+        invalidate: false,
+    },
+];
+```
+
+These defaults can be overrides by provided an array of objects with the following properties:
+
+-   **include** - (Required): an array of file names or file patterns, passed to the s3 sync command.
+-   **cacheControl** - (Required): the cache control header, passed to the s3 sycn command.
+-   **invalidate** - (Required): whether or not these files should be invalidated in CloudFront.
+
 ## faq
 
 ### How do I resolve the error "Required property 's3Bucket' is missing"?
@@ -241,7 +330,7 @@ The SAM package and deploy steps require an s3 bucket to store and retrieve depl
 
 You need to create and s3 bucket to store your deployment artefacts and then include that bucket in your project configuration.
 
-1. Create a bucket in AWS to store deploy artifacts (via the [console](https://console.aws.amazon.com) or [AWS CLI](https://docs.aws.amazon.com/cli/latest/reference/s3api/create-bucket.html) using `aws s3api create-bucket --bucket ${my-nx-deploy-artifacts} --region us-east-1`) 
+1. Create a bucket in AWS to store deploy artifacts (via the [console](https://console.aws.amazon.com) or [AWS CLI](https://docs.aws.amazon.com/cli/latest/reference/s3api/create-bucket.html) using `aws s3api create-bucket --bucket ${my-nx-deploy-artifacts} --region us-east-1`)
 1. Update your `workspace.json` or `angular.json` to include the key `s3Bucket` under both the `package` and `deploy` targets (see details above for the package and deploy steps).
 
 ## contributing
