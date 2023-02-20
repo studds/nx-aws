@@ -7,36 +7,45 @@
     "properties": {
         "buildOutputPath": {
             "type": "string",
-            "description": "Explicit path to the built output that will be uploaded to S3"
+            "description": "Explicit path to the built output that will be uploaded to S3 - defaults to outputPath from the build target on the current project"
         },
         "buildTarget": {
             "type": "string",
             "description": "Target to retrieve outputPath from - by default, will use the build target on the current project"
         },
         "resources": {
+            "description": "Which files are uploaded, the cache-control header to use, and whether they should be invalidated in the CloudFront distribution - uses sensisble defaults",
             "type": "array",
             "items": {
                 "type": "object",
                 "properties": {
                     "include": {
+                        "description": "List of file names or patterns, passed to s3 sync command",
                         "type": "array",
                         "items": {
                             "type": "string"
                         }
                     },
                     "cacheControl": {
+                        "description": "Cache control header, passed to s3 sync command",
                         "type": "string"
+                    },
+                    "invalidate": {
+                        "description": "Whether to invalidate these files in the CloudFront distribution, after upload",
+                        "type": "boolean"
                     }
                 }
             }
         },
         "destPrefix": {
-            "type": "string"
+            "type": "string",
+            "description": "The key prefix used to upload the files to s3. Note that the distribution must be configured with a matching `OriginPath`"
         },
         "stackSuffix": {
             "type": "string"
         },
         "bucket": {
+            "description": "An object with `targetName` (referring to a sam:deploy project) and `outputName` (referring to a CloudFormation stack output with the distribution id)",
             "type": "object",
             "properties": {
                 "targetName": {
@@ -49,6 +58,7 @@
             "required": ["targetName", "outputName"]
         },
         "distribution": {
+            "description": "An object with `targetName` (referring to a sam:deploy project) and `outputName` (referring to a CloudFormation stack output with the distribution id)",
             "type": "object",
             "properties": {
                 "targetName": {
