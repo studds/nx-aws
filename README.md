@@ -258,11 +258,11 @@ Add the following to `angular.json`:
                 "options": {
                     "destPrefix": "public",
                     "bucket": {
-                        "targetName": "ngh-ballot-api:deploy",
+                        "targetName": "api:deploy",
                         "outputName": "WebBucket"
                     },
                     "distribution": {
-                        "targetName": "ngh-ballot-api:deploy",
+                        "targetName": "api:deploy",
                         "outputName": "DistributionId"
                     },
                     "config": {
